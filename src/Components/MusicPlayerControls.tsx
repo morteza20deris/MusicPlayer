@@ -10,9 +10,12 @@ export const MusicPlayerControls = () => {
     const { togglePlayPause, playing, getPosition, duration, seek } = useGlobalAudioPlayer()
     const { PlayNextMusic, PlayPreviousMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
-    // setInterval(() => setMusicPos(Math.round((getPosition() + Number.EPSILON) * 100) / 100), 100)
-    setInterval(() => setMusicPos(getPosition()), 1)
+    setInterval(() => setMusicPos(Math.round((getPosition() + Number.EPSILON) * 100) / 100), 1000)
+
     const percentageToMusicLength = (percentage: number) => (duration / 100) * percentage
+
+
+
     return (
         <div style={{ position: 'fixed', bottom: 0, zIndex: 999, height: "90px", minWidth: "60vw" }}>
 

@@ -10,8 +10,8 @@ import { MusicPlayer } from './MusicPlayer';
 
 
 export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
-    const { currentSong, setCurrentSong, setPlayList } = musicPlayerData()
-    musicArray = DummyData.tracks.data
+    const { currentSong } = musicPlayerData()
+    musicArray = DummyData.tracks.data //temporary for testing
     const player = useGlobalAudioPlayer()
     const { PlayMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
@@ -30,10 +30,7 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
                     <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={hero} boxSize={100} borderRadius={50} bgColor="white" />
                     <div>
                         <Text marginTop={0} fontSize={15}>{"Artist: " + music.artist.name}</Text>
-                        <HStack>
-                            <Text fontSize={25} marginTop={-5}>{music.title}</Text>
-
-                        </HStack>
+                        <Text fontSize={25} marginTop={-5}>{music.title}</Text>
                     </div>
                     <Button onClick={() => {
                         if (index === currentSong && player.src) {
@@ -44,8 +41,10 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
                             PlayMusic({ newPlayList: musicArray, songIndex: index })
                         }
 
+                    }}>
+                        {currentSong === index ? (player.playing ? "Pause" : player.isLoading ? "Loading..." : "Play") : "Play"}
+                    </Button>
 
-                    }}>{(currentSong === index && player.playing) ? (player.isLoading ? "Loading..." : "Pause") : (currentSong === index && player.isLoading ? "Loading..." : "Play")}</Button>
                     {currentSong === index && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>}
                 </HStack >
             )
