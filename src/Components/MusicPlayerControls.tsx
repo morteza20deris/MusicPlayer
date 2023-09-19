@@ -1,27 +1,34 @@
 import { Box, Button, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, VStack } from '@chakra-ui/react';
-import { musicPlayerData } from './DataStore';
-import { useGlobalAudioPlayer } from 'react-use-audio-player';
+import { useEffect, useState } from 'react';
 import { MdGraphicEq } from "react-icons/md";
-import { useState } from 'react';
-import { MusicPlayer } from './MusicPlayer';
+import { useGlobalAudioPlayer } from 'react-use-audio-player';
+import { MusicPlayer } from '../hooks/useMusicPlayer';
+import { useMusicPlayerData } from '../hooks/useDataStore';
 
 export const MusicPlayerControls = () => {
-    const { currentSong } = musicPlayerData()
+    const { currentSong } = useMusicPlayerData()
     const { togglePlayPause, playing, getPosition, duration, seek } = useGlobalAudioPlayer()
     const { PlayNextMusic, PlayPreviousMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
-    setInterval(() => setMusicPos(Math.round((getPosition() + Number.EPSILON) * 100) / 100), 1000)
 
     const percentageToMusicLength = (percentage: number) => (duration / 100) * percentage
 
+    const getSeekPosFromMusic = duration ? ((1 - (((duration) - musicPos) / (duration))) * 100) : 0
 
+    useEffect(() => {
+        setInterval(() => setMusicPos(Math.round((getPosition() + Number.EPSILON) * 100) / 100), 10)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <div style={{ position: 'fixed', bottom: 0, zIndex: 999, height: "90px", minWidth: "60vw" }}>
 
             <VStack height="100%" background="gray.900" >
                 <Box width="97vw">
-                    <Slider onChange={(e) => seek(percentageToMusicLength(e))} value={(1 - ((duration - musicPos) / duration)) * 100 || 0} aria-label='slider-ex-4' defaultValue={0}>
+                    <Slider onChange={(e) => {
+                        seek(percentageToMusicLength(e))
+                    }} value={getSeekPosFromMusic} aria-label='slider-ex-4' defaultValue={0}>
                         <SliderTrack bg='red.100'>
                             <SliderFilledTrack bg='tomato' />
                         </SliderTrack>

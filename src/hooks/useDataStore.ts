@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import DummyData from "./DummyData"
-import { TrackProps } from "./Props"
+import DummyData from "../Services/DummyData"
+import { TrackProps } from "../Components/Props"
 
 interface searchInputProps{
     searchText: string
@@ -18,12 +18,12 @@ interface MusicPlayerProps{
     setNextSong:(nextSong:number)=>void
 }
 
-export const searchInput = create<searchInputProps>((set) => ({
+export const useSearchInputData = create<searchInputProps>((set) => ({
     searchText: "",
     setSearchText:(text)=>set(()=>({searchText:text}))
 }))
 
-export const musicPlayerData = create<MusicPlayerProps>((set) => ({
+export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
     playList:DummyData.tracks.data,
     currentSong: 0,
     nextSong: 1,

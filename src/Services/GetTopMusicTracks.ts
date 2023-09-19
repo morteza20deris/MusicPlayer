@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import ApiClient from "../Services/ApiClient"
+import ApiClient from "./ApiClient"
     
  const GetTopMusicTracks = ({maxTracks}:{maxTracks:number}) => {
     useQuery({

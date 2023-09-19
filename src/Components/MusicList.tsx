@@ -2,24 +2,26 @@ import { Button, HStack, Image, Text } from "@chakra-ui/react";
 import { useEffect, useState } from 'react';
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 import hero from "../assets/hero.png";
-import { musicPlayerData } from "./DataStore";
-import DummyData from "./DummyData";
+import { useMusicPlayerData } from "../hooks/useDataStore";
+import DummyData from "../Services/DummyData";
 import { TrackProps } from "./Props";
-import "./imageRotation.css";
-import { MusicPlayer } from './MusicPlayer';
+import "./styles/imageRotation.css";
+import { MusicPlayer } from '../hooks/useMusicPlayer';
 
 
 export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
-    const { currentSong } = musicPlayerData()
+    const { currentSong } = useMusicPlayerData()
     musicArray = DummyData.tracks.data //temporary for testing
     const player = useGlobalAudioPlayer()
     const { PlayMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
-    setInterval(() => setMusicPos(Math.floor(player.getPosition())), 1000)
+
 
     useEffect(() => {
+        setInterval(() => setMusicPos(Math.floor(player.getPosition())), 1000)
 
-    }, [currentSong])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
 
     return (<>

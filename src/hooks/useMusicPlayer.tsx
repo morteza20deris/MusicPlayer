@@ -1,10 +1,10 @@
 import { useGlobalAudioPlayer } from "react-use-audio-player";
-import { musicPlayerData } from "./DataStore";
-import DummyData from "./DummyData";
-import { TrackProps } from './Props';
+import { useMusicPlayerData } from "./useDataStore";
+import DummyData from "../Services/DummyData";
+import { TrackProps } from '../Components/Props';
 
 export const MusicPlayer = () => {
-    const { setCurrentSong, setNextSong, setPreviousSong, currentSong, playList, setPlayList } = musicPlayerData()
+    const { setCurrentSong, setNextSong, setPreviousSong, currentSong, playList, setPlayList } = useMusicPlayerData()
     const player = useGlobalAudioPlayer()
 
 

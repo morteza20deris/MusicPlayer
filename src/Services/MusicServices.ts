@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import ApiClient from "../Services/ApiClient";
-import { PlayListProps } from "./Props";
+import ApiClient from "./ApiClient";
+import { PlayListProps } from "../Components/Props";
 
 export const SearchMusicByArtist = ({ artistName }: { artistName: string }) => {
      return useQuery({

@@ -2,7 +2,7 @@ import { HStack, Image, Switch, useColorMode } from "@chakra-ui/react"
 import { useState } from "react"
 import logo from "../assets/react.svg"
 import { Search } from "./Search"
-import "./imageRotation.css"
+import "./styles/imageRotation.css"
 
 
 const NavBar = () => {
