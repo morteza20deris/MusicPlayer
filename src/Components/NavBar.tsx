@@ -6,7 +6,7 @@ import logo from "../assets/react.svg";
 import useUserAuthentication from '../hooks/useUserAuthentication';
 import { Search } from "./Search";
 import "./styles/imageRotation.css";
-import { OnUserSignIN } from '../hooks/OnUserSignIN';
+import { OnUserSignIN } from '../Services/OnUserSignIn';
 
 const NavBar = () => {
     const [active, setActive] = useState(false)

@@ -18,9 +18,19 @@ interface MusicPlayerProps{
     setNextSong:(nextSong:number)=>void
 }
 
+interface LikedSongsProps{
+    likedSongs: TrackProps[]
+    setLikedSongs:(likedSongs:TrackProps[])=>void
+}
+
 export const useSearchInputData = create<searchInputProps>((set) => ({
     searchText: "",
     setSearchText:(text)=>set(()=>({searchText:text}))
+}))
+
+export const useLikedSongs = create<LikedSongsProps>(set => ({
+    likedSongs: [],
+    setLikedSongs: (newLikedSongs:TrackProps[])=>set(()=>({likedSongs:newLikedSongs}))
 }))
 
 export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
