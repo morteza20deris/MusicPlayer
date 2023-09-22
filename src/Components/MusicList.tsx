@@ -7,6 +7,7 @@ import DummyData from "../Services/DummyData";
 import { TrackProps } from "./Props";
 import "./styles/imageRotation.css";
 import { MusicPlayer } from '../hooks/useMusicPlayer';
+import AddLikedSongToDB from "../Services/AddLikedSongToDB";
 
 
 export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
@@ -32,7 +33,7 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
                     <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={hero} boxSize={100} borderRadius={50} bgColor="white" />
                     <div>
                         <Text marginTop={0} fontSize={15}>{"Artist: " + music.artist.name}</Text>
-                        <Text fontSize={25} marginTop={-5}>{music.title}</Text>
+                        <Text onClick={() => AddLikedSongToDB(music)} fontSize={25} marginTop={-5}>{music.title}</Text>
                     </div>
                     <Button onClick={() => {
                         if (index === currentSong && player.src) {

@@ -5,9 +5,7 @@ import App from './App.tsx'
 import theme from './Theme.ts'
 import 'bootstrap/dist/css/bootstrap.css'
 import React from 'react'
-
 const client = new QueryClient();
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>

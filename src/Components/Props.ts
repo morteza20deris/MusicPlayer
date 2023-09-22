@@ -65,3 +65,15 @@ interface AlbumProps{
     tracklist:string
     type:string
 }
+
+export interface UserProps{
+    email: string
+    family_name: string
+    given_name: string
+    id: number
+    locale: string
+    name: string
+    picture: string
+    verified_email: boolean
+    
+}
