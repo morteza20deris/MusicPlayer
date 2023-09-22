@@ -10,6 +10,7 @@ import { OnUserSignIN } from './Services/OnUserSignIn';
 import { TrackProps } from './Components/Props';
 import DummyData from './Services/DummyData';
 import { useLikedSongs } from './hooks/useDataStore';
+import { useQuery } from '@tanstack/react-query';
 
 function App() {
   // const [selectedPlayList, setSelectedPlayList] = useState(1140232701)
@@ -25,27 +26,31 @@ function App() {
   const UserLikedSongsCollection = collection(db, Authentication.currentUser?.uid + "",)
   const { isAuthenticated } = OnUserSignIN()
 
+  const getMyLikedSongs = async () => {
+    const data = await getDocs(UserLikedSongsCollection)
+    const filteredData = data.docs.map(dt => ({ ...dt.data() })) as TrackProps[]
+    console.log(filteredData)
+    setLikedSongs(filteredData)
+    return filteredData
 
+  }
+
+  useQuery({
+    queryKey: [Authentication.currentUser?.uid],
+    queryFn: () => {
+      if (isAuthenticated) {
+        return getMyLikedSongs()
+      } else {
+        return []
+      }
+    },
+
+  })
 
   useEffect(() => {
     setDisplayMusic(DummyData.tracks.data)
-    const getMyLikedSongs = async () => {
-      const data = await getDocs(UserLikedSongsCollection)
-      const filteredData = data.docs.map(dt => ({ ...dt.data() })) as TrackProps[]
-      console.log(filteredData)
-      setLikedSongs(filteredData)
-
-    }
-
-    if (Authentication.currentUser) {
-      console.log("getting songs");
-
-      getMyLikedSongs()
-    }
-
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated])
+  }, [])
 
 
 
