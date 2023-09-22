@@ -12,7 +12,7 @@ import "./styles/imageRotation.css";
 
 export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
     const { currentSong } = useMusicPlayerData()
-    const { likedSongs } = useLikedSongs()
+    const { likedSongs, setLikedSongs } = useLikedSongs()
     const player = useGlobalAudioPlayer()
     const { PlayMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
@@ -49,7 +49,10 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
                     </Button>
 
                     {currentSong === index && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>}
-                    {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill color="green" /> : <BsHeart />}
+                    {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill color="green" /> : <BsHeart onClick={() => {
+                        setLikedSongs([...likedSongs, music])
+                        AddLikedSongToDB(music)
+                    }} />}
                 </HStack >
             )
         })}
