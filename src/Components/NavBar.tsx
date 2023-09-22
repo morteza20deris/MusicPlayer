@@ -12,11 +12,12 @@ const NavBar = () => {
     const [active, setActive] = useState(false)
     const { toggleColorMode } = useColorMode()
     const { Login, logOut, user } = useUserAuthentication()
-    const [first, setfirst] = useState(false)
+    const [first, setFirst] = useState(false)
 
     const { isAuthenticated } = OnUserSignIN()
     useEffect(() => {
-        setfirst(!first)
+        setFirst(!first)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated])
 
 
@@ -31,7 +32,7 @@ const NavBar = () => {
                     toggleColorMode()
                     setActive(!active)
                 }} isChecked={active} />
-                {isAuthenticated ? <Link><Image className='me-4 ms-2' boxSize={50} borderRadius={100} onClick={() => logOut()} src={user?.user.photoURL || Authentication.currentUser?.photoURL} alt='User Picture' /></Link> :
+                {isAuthenticated ? <Link><Image className='me-4 ms-2' boxSize={50} borderRadius={100} onClick={() => logOut()} src={user?.user.photoURL || Authentication.currentUser?.photoURL || undefined} alt='User Picture' /></Link> :
                     <Link><BiUserCircle onClick={() => Login()} className="me-3" size="50" /></Link>}
 
             </HStack>
