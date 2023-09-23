@@ -68,10 +68,10 @@ function App() {
           <List >
             {EndPoints.map(item => {
               return <ListItem marginY={1} key={item.id}>
-                <Button width="100px">{item.name}</Button>
+                <Button marginStart={8} width="100px">{item.name}</Button>
               </ListItem>
             })}
-            <Button onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }} width="100px">Liked Songs</Button>
+            <Button marginStart={8} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }} width="100px">Liked Songs</Button>
           </List>
         </GridItem>
 

@@ -30,11 +30,11 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
         {musicArray?.map((music, index) => {
             return (
 
-                <HStack key={music.id} className="my-2">
+                <HStack key={music.id} marginY="10px">
                     <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={hero} boxSize={100} borderRadius={50} bgColor="white" />
                     <div>
-                        <Text marginTop={0} fontSize={15}>{"Artist: " + music.artist.name}</Text>
-                        <Text onClick={() => AddLikedSongToDB(music)} fontSize={25} marginTop={-5}>{music.title}</Text>
+                        <Text marginTop={-2} fontSize={15}>{"Artist: " + music.artist.name}</Text>
+                        <Text onClick={() => AddLikedSongToDB(music)} fontSize={25} marginTop={-2}>{music.title}</Text>
                     </div>
                     <Button onClick={() => {
                         if (index === currentSong && player.src) {

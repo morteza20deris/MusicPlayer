@@ -17,6 +17,8 @@ const NavBar = () => {
     const { isAuthenticated } = OnUserSignIN()
     useEffect(() => {
         setFirst(!first)
+        console.log("hello");
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated])
 
@@ -28,12 +30,12 @@ const NavBar = () => {
             <HStack background="gray.900" marginEnd={3} justifyContent="space-between">
                 <Image className="logo-rotation" padding={2} boxSize="60px" src={logo} />
                 <Search />
-                <Switch marginEnd={3} size="lg" onChange={() => {
+                <Switch marginEnd={1} size="lg" onChange={() => {
                     toggleColorMode()
                     setActive(!active)
                 }} isChecked={active} />
-                {isAuthenticated ? <Link><Image className='me-4 ms-2' boxSize={50} borderRadius={100} onClick={() => logOut()} src={user?.user.photoURL || Authentication.currentUser?.photoURL || undefined} alt='User Picture' /></Link> :
-                    <Link><BiUserCircle onClick={() => Login()} className="me-3" size="50" /></Link>}
+                {isAuthenticated ? <Link><Image style={{ fontSize: 50 }} marginEnd="50px" boxSize={50} borderRadius={100} onClick={() => logOut()} src={user?.user.photoURL || Authentication.currentUser?.photoURL || undefined} alt='User Picture' /></Link> :
+                    <Link><BiUserCircle style={{ marginRight: "10px", fontSize: "50px" }} onClick={() => Login()} size="50" /></Link>}
 
             </HStack>
         </div>
