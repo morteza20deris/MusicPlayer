@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import DummyData from "../Services/DummyData"
+// import DummyData from "../Services/DummyData"
 import { TrackProps } from "../Components/Props"
 
 interface searchInputProps{
@@ -15,7 +15,9 @@ interface MusicPlayerProps{
     previousSong: number
     setPreviousSong:(previousSong:number)=>void
     nextSong: number
-    setNextSong:(nextSong:number)=>void
+    setNextSong: (nextSong: number) => void
+    currentMusicID: number
+    setCurrentMusicID:(CurrentMusicID:number)=>void
 }
 
 interface LikedSongsProps{
@@ -34,12 +36,14 @@ export const useLikedSongs = create<LikedSongsProps>(set => ({
 }))
 
 export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
-    playList:DummyData.tracks.data,
+    playList:[],
     currentSong: 0,
     nextSong: 1,
     previousSong: 0,
+    currentMusicID:0,
     setCurrentSong:(newCurrentSong)=>set(()=>({currentSong:newCurrentSong})),
     setNextSong:(newNextSong)=>set(()=>({nextSong:newNextSong})),
     setPreviousSong: (newPreviousSong) => set(() => ({ previousSong: newPreviousSong })),
-    setPlayList:(newPlayList) => set(() => ({ playList: newPlayList }))
+    setPlayList: (newPlayList) => set(() => ({ playList: newPlayList })),
+    setCurrentMusicID:(newCurrentMusicID)=>set(()=>({currentMusicID:newCurrentMusicID}))
 }))

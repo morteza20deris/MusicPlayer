@@ -12,13 +12,15 @@ import DeleteLikedSongFormDB from "../Services/DeleteLikedSongFormDB";
 import { OnUserSignIN } from "../Services/OnUserSignIn";
 
 
-export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
-    const { currentSong } = useMusicPlayerData()
+export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
+    const { currentMusicID } = useMusicPlayerData()
     const { likedSongs, setLikedSongs } = useLikedSongs()
     const player = useGlobalAudioPlayer()
     const { PlayMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
     const { isAuthenticated } = OnUserSignIN()
+    const { setPlayList } = useMusicPlayerData()
+    const [first, setfirst] = useState(false)
 
 
     useEffect(() => {
@@ -28,30 +30,33 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
     }, [])
 
 
+
     return (<>
-        {musicArray?.map((music, index) => {
-            return (
+        {musicArray.map((music, index) => {
+            if (music.preview) return (
 
                 <HStack key={music.id} marginY="10px">
-                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={hero} boxSize={100} borderRadius={50} bgColor="white" />
+                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_small || hero} boxSize={100} borderRadius={50} bgColor="white" />
                     <div>
                         <Text marginTop={-2} fontSize={15}>{"Artist: " + music.artist.name}</Text>
                         <Text onClick={() => AddLikedSongToDB(music)} fontSize={25} marginTop={-2}>{music.title}</Text>
                     </div>
                     <Button onClick={() => {
-                        if (index === currentSong && player.src) {
+                        if (music.id === currentMusicID && player.src) {
                             player.togglePlayPause()
 
                         } else {
 
                             PlayMusic({ newPlayList: musicArray, songIndex: index })
+                            setPlayList(musicArray)
+
                         }
 
                     }}>
-                        {currentSong === index ? (player.playing ? "Pause" : player.isLoading ? "Loading..." : "Play") : "Play"}
+                        {music.id === currentMusicID ? (player.playing ? "Pause" : player.isLoading ? "Loading..." : "Play") : "Play"}
                     </Button>
 
-                    {currentSong === index && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>}
+                    {music.preview === player.src && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>}
                     {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill onClick={() => {
                         DeleteLikedSongFormDB(music.id)
                         setLikedSongs(likedSongs.filter(song => song.id !== music.id))

@@ -8,21 +8,22 @@ import { Authentication, db } from './Configs/Firebase';
 import EndPoints from "./Services/TopGenreEndPoints";
 import { OnUserSignIN } from './Services/OnUserSignIn';
 import { TrackProps } from './Components/Props';
-import DummyData from './Services/DummyData';
-import { useLikedSongs } from './hooks/useDataStore';
+// import DummyData from './Services/DummyData';
+import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
 import { useQuery } from '@tanstack/react-query';
+import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
+import TopGenreEndPoints from './Services/TopGenreEndPoints';
 
 function App() {
-  // const [selectedPlayList, setSelectedPlayList] = useState(1140232701)
+  const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
   // const searchRes = SearchMusicByArtist({ artistName: searchText })
-  // const res = PlayListTracks({ id: selectedPlayList + "" })
+  const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
   // console.log(res.data);
 
-  // const [showRes, setShowRes] = useState(res)
 
-  // const [myLikedSongs, setMyLikedSongs] = useState<TrackProps[]>()
   const { likedSongs, setLikedSongs } = useLikedSongs()
   const [displayMusic, setDisplayMusic] = useState<TrackProps[]>()
+
   const UserLikedSongsCollection = collection(db, Authentication.currentUser?.uid + "",)
   const { isAuthenticated } = OnUserSignIN()
 
@@ -48,9 +49,12 @@ function App() {
   })
 
   useEffect(() => {
-    setDisplayMusic(DummyData.tracks.data)
+    // setDisplayMusic(DummyData.tracks.data)
+    if (res.data) {
+      setDisplayMusic(res.data.tracks.data)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [res.data])
 
 
 
@@ -68,7 +72,7 @@ function App() {
           <List >
             {EndPoints.map(item => {
               return <ListItem marginY={1.5} key={item.id}>
-                <Button marginStart={5} width="150px">{item.name}</Button>
+                <Button onClick={() => setSelectedPlayList(item.id)} marginStart={5} width="150px">{item.name}</Button>
               </ListItem>
             })}
             <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }}>Liked Songs</Button>
@@ -79,7 +83,8 @@ function App() {
         <GridItem paddingStart={10} paddingTop={5} area={"main"}>
 
           {/* {res.data && <MusicList musicArray={res.data.tracks.data} />} */}
-          <MusicList musicArray={displayMusic} />
+          {displayMusic && <MusicList musicArray={displayMusic} />}
+
         </GridItem>
 
       </Grid>

@@ -1,10 +1,10 @@
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 import { useMusicPlayerData } from "./useDataStore";
-import DummyData from "../Services/DummyData";
+// import DummyData from "../Services/DummyData";
 import { TrackProps } from '../Components/Props';
 
 export const MusicPlayer = () => {
-    const { setCurrentSong, setNextSong, setPreviousSong, currentSong, playList, setPlayList } = useMusicPlayerData()
+    const { setCurrentSong, setNextSong, setPreviousSong, currentSong, playList, setPlayList, setCurrentMusicID } = useMusicPlayerData()
     const player = useGlobalAudioPlayer()
 
 
@@ -17,16 +17,28 @@ export const MusicPlayer = () => {
         PlayMusic({ songIndex: currentIndex - 1 >= 0 ? currentIndex - 1 : currentIndex })
     }
 
-    let test = 0
-    const PlayMusic = ({ newPlayList, songIndex }: { newPlayList?: TrackProps[], songIndex?: number }) => {
-        if (songIndex) test = songIndex
-        console.log("Playing Current Song", test);
+    let currentIndex = 0
+    let currentPlaylist = [] as TrackProps[]
+    const PlayMusic = async ({ newPlayList, songIndex }: { newPlayList?: TrackProps[], songIndex?: number }) => {
+        if (songIndex) currentIndex = songIndex
+        if (newPlayList) currentPlaylist = newPlayList
 
-        setPlayList(newPlayList || DummyData.tracks.data)
-        setCurrentSong(test)
-        player.load(playList[test].preview, {
+
+        setCurrentSong(currentIndex)
+        if (!newPlayList && playList.length > 0) { currentPlaylist = playList }
+        else if (!playList && newPlayList && newPlayList.length > 0) {
+            setPlayList(newPlayList)
+        }
+
+        if (currentPlaylist.length > 0) setCurrentMusicID(currentPlaylist[currentIndex].id)
+        console.log("Playing Current Song", currentIndex);
+        // console.log(newPlayList[test].preview);
+
+
+
+        if (playList) player.load(currentPlaylist[currentIndex].preview, {
             html5: true, autoplay: true, format: "mp3", onend: () => {
-                if (playList.length - 1 > test) test++
+                if (currentPlaylist.length - 1 > currentIndex) currentIndex++
 
                 // console.log(test);
                 PlayMusic({})

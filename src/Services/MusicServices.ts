@@ -15,7 +15,7 @@ export const SearchMusicByArtist = ({ artistName }: { artistName: string }) => {
    
 }
 
-export const PlayListTracks = ({id}:{id:string}) => {
+export const GetPlayListTracksFromDeezer = ({id}:{id:string}) => {
    return useQuery({
       queryKey: [id],
       queryFn: () => {
