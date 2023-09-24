@@ -5,7 +5,7 @@ import { MusicList } from "./Components/MusicList";
 import { MusicPlayerControls } from './Components/MusicPlayerControls';
 import NavBar from "./Components/NavBar";
 import { Authentication, db } from './Configs/Firebase';
-import EndPoints from "./Services/EndPoints";
+import EndPoints from "./Services/TopGenreEndPoints";
 import { OnUserSignIN } from './Services/OnUserSignIn';
 import { TrackProps } from './Components/Props';
 import DummyData from './Services/DummyData';
@@ -67,16 +67,16 @@ function App() {
           <Heading paddingTop={5} paddingLeft={6}>Genres</Heading>
           <List >
             {EndPoints.map(item => {
-              return <ListItem marginY={1} key={item.id}>
-                <Button marginStart={8} width="100px">{item.name}</Button>
+              return <ListItem marginY={1.5} key={item.id}>
+                <Button marginStart={5} width="150px">{item.name}</Button>
               </ListItem>
             })}
-            <Button marginStart={8} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }} width="100px">Liked Songs</Button>
+            <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }}>Liked Songs</Button>
           </List>
         </GridItem>
 
 
-        <GridItem paddingTop={5} area={"main"}>
+        <GridItem paddingStart={10} paddingTop={5} area={"main"}>
 
           {/* {res.data && <MusicList musicArray={res.data.tracks.data} />} */}
           <MusicList musicArray={displayMusic} />

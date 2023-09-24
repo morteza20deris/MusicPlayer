@@ -7,21 +7,22 @@ import useUserAuthentication from '../hooks/useUserAuthentication';
 import { Search } from "./Search";
 import "./styles/imageRotation.css";
 import { OnUserSignIN } from '../Services/OnUserSignIn';
+import { useLikedSongs } from '../hooks/useDataStore';
 
 const NavBar = () => {
     const [active, setActive] = useState(false)
     const { toggleColorMode } = useColorMode()
     const { Login, logOut, user } = useUserAuthentication()
     const [first, setFirst] = useState(false)
+    const { setLikedSongs } = useLikedSongs()
 
     const { isAuthenticated } = OnUserSignIN()
     useEffect(() => {
         setFirst(!first)
-        console.log("hello");
+        console.log("NavBar StateChange");
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated])
-
 
 
 
@@ -34,9 +35,28 @@ const NavBar = () => {
                     toggleColorMode()
                     setActive(!active)
                 }} isChecked={active} />
-                {isAuthenticated ? <Link><Image style={{ fontSize: 50 }} marginEnd="50px" boxSize={50} borderRadius={100} onClick={() => logOut()} src={user?.user.photoURL || Authentication.currentUser?.photoURL || undefined} alt='User Picture' /></Link> :
-                    <Link><BiUserCircle style={{ marginRight: "10px", fontSize: "50px" }} onClick={() => Login()} size="50" /></Link>}
-
+                {isAuthenticated ?
+                    <Link>
+                        <Image
+                            style={{ fontSize: 50 }}
+                            marginEnd="50px"
+                            boxSize={50}
+                            borderRadius={100}
+                            src={user?.user.photoURL || Authentication.currentUser?.photoURL || undefined}
+                            alt='User Picture'
+                            onClick={() => {
+                                logOut()
+                                setLikedSongs([])
+                            }}
+                        />
+                    </Link> :
+                    <Link>
+                        <BiUserCircle
+                            style={{ marginRight: "10px", fontSize: "50px" }}
+                            size="50"
+                            onClick={() => Login()}
+                        />
+                    </Link>}
             </HStack>
         </div>
     )

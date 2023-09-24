@@ -9,6 +9,7 @@ import { MusicPlayer } from '../hooks/useMusicPlayer';
 import { TrackProps } from "./Props";
 import "./styles/imageRotation.css";
 import DeleteLikedSongFormDB from "../Services/DeleteLikedSongFormDB";
+import { OnUserSignIN } from "../Services/OnUserSignIn";
 
 
 export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
@@ -17,6 +18,7 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
     const player = useGlobalAudioPlayer()
     const { PlayMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
+    const { isAuthenticated } = OnUserSignIN()
 
 
     useEffect(() => {
@@ -54,8 +56,13 @@ export const MusicList = ({ musicArray }: { musicArray?: TrackProps[] }) => {
                         DeleteLikedSongFormDB(music.id)
                         setLikedSongs(likedSongs.filter(song => song.id !== music.id))
                     }} color="green" /> : <BsHeart onClick={() => {
-                        setLikedSongs([...likedSongs, music])
-                        AddLikedSongToDB(music)
+                        if (isAuthenticated) {
+                            setLikedSongs([...likedSongs, music])
+                            AddLikedSongToDB(music)
+                        } else {
+                            console.log("Please LogIn First");
+
+                        }
                     }} />}
                 </HStack >
             )
