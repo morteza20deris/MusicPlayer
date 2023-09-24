@@ -9,7 +9,7 @@ import EndPoints from "./Services/TopGenreEndPoints";
 import { OnUserSignIN } from './Services/OnUserSignIn';
 import { TrackProps } from './Components/Props';
 // import DummyData from './Services/DummyData';
-import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
+import { useLikedSongs } from './hooks/useDataStore';
 import { useQuery } from '@tanstack/react-query';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';

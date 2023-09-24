@@ -20,7 +20,6 @@ export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
     const [musicPos, setMusicPos] = useState(0)
     const { isAuthenticated } = OnUserSignIN()
     const { setPlayList } = useMusicPlayerData()
-    const [first, setfirst] = useState(false)
 
 
     useEffect(() => {
