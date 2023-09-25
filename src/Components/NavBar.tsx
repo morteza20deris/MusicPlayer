@@ -46,11 +46,13 @@ const NavBar = () => {
                             alt='User Picture'
                             onClick={() => {
                                 logOut()
-                                setLikedSongs([])
+                                setTimeout(() => {
+                                    setLikedSongs([])
+                                }, 0);
                             }}
                         />
                     </Link> :
-                    <Link>
+                    <Link isExternal={isAuthenticated ? false : true}>
                         <BiUserCircle
                             style={{ marginRight: "10px", fontSize: "50px" }}
                             size="50"

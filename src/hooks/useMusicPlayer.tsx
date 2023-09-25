@@ -20,6 +20,7 @@ export const MusicPlayer = () => {
     let currentIndex = 0
     let currentPlaylist = [] as TrackProps[]
     const PlayMusic = async ({ newPlayList, songIndex }: { newPlayList?: TrackProps[], songIndex?: number }) => {
+        if (currentPlaylist.length > 0 && !currentPlaylist[currentIndex].preview) currentIndex++
         if (songIndex) currentIndex = songIndex
         if (newPlayList) currentPlaylist = newPlayList
 
@@ -32,7 +33,7 @@ export const MusicPlayer = () => {
 
         if (currentPlaylist.length > 0) setCurrentMusicID(currentPlaylist[currentIndex].id)
         console.log("Playing Current Song", currentIndex);
-        // console.log(newPlayList[test].preview);
+        console.log(currentPlaylist[currentIndex]);
 
 
 
