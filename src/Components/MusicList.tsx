@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { BsFillHeartFill, BsHeart } from "react-icons/bs";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 import AddLikedSongToDB from "../Services/AddLikedSongToDB";
+import DeleteLikedSongFormDB from "../Services/DeleteLikedSongFormDB";
+import { OnUserSignIN } from "../Services/OnUserSignIn";
 import hero from "../assets/hero.png";
 import { useLikedSongs, useMusicPlayerData } from "../hooks/useDataStore";
 import { MusicPlayer } from '../hooks/useMusicPlayer';
 import { TrackProps } from "./Props";
 import "./styles/imageRotation.css";
-import DeleteLikedSongFormDB from "../Services/DeleteLikedSongFormDB";
-import { OnUserSignIN } from "../Services/OnUserSignIn";
 
 
 export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
@@ -35,10 +35,10 @@ export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
             if (music.preview) return (
 
                 <HStack key={music.id} marginY="10px">
-                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_small || hero} boxSize={100} borderRadius={50} bgColor="white" />
+                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_small || hero} boxSize="15%" maxH="100px" maxW="100px" borderRadius="50%" bgColor="white" />
                     <div>
-                        <Text marginTop={-2} fontSize={15}>{"Artist: " + music.artist.name}</Text>
-                        <Text onClick={() => AddLikedSongToDB(music)} fontSize={25} marginTop={-2}>{music.title}</Text>
+                        <Text marginTop="1%" w="30vw" fontSize="2vw">{"Artist: " + music.artist.name}</Text>
+                        <Text w="46vw" fontSize="3vw" marginTop="1%">{music.title}</Text>
                     </div>
                     <Button onClick={() => {
                         if (music.id === currentMusicID && player.src) {

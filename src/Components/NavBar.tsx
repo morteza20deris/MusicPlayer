@@ -27,8 +27,8 @@ const NavBar = () => {
 
 
     return (
-        <div style={{ position: "fixed", inset: "0", zIndex: 999, width: "100vw", height: "0px" }}>
-            <HStack background="gray.900" marginEnd={3} justifyContent="space-between">
+        <div style={{ position: "fixed", inset: "0", zIndex: 999, width: "100vw", height: "1px" }}>
+            <HStack background="gray.900" justifyContent="space-between">
                 <Image className="logo-rotation" padding={2} boxSize="60px" src={logo} />
                 <Search />
                 <Switch marginEnd={1} size="lg" onChange={() => {

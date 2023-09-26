@@ -1,4 +1,4 @@
-import { Button, Grid, GridItem, Heading, List, ListItem } from '@chakra-ui/react';
+import { Button, Grid, GridItem, Heading, List, ListItem, Show } from '@chakra-ui/react';
 import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
@@ -13,6 +13,7 @@ import { useLikedSongs } from './hooks/useDataStore';
 import { useQuery } from '@tanstack/react-query';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';
+import DummyData from './Services/DummyData';
 
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
@@ -40,7 +41,7 @@ function App() {
     queryKey: [Authentication.currentUser?.uid],
     queryFn: () => {
       if (isAuthenticated) {
-        return getMyLikedSongs()
+        // return getMyLikedSongs()
       } else {
         return []
       }
@@ -62,32 +63,35 @@ function App() {
   return (
     <>
       <NavBar />
-      <Grid marginTop={70} gridTemplateColumns={`150px`} templateAreas={{
-        base: ` "side main"`
+      <Grid marginTop={70} gridTemplateColumns={{ lg: "150px" }} templateAreas={{
+        base: ` " main"`,
+        lg: `"side main"`
 
       }}>
 
-        <GridItem area={"side"}>
-          <Heading paddingTop={5} paddingLeft={6}>Genres</Heading>
-          <List >
-            {EndPoints.map(item => {
-              return <ListItem marginY={1.5} key={item.id}>
-                <Button onClick={() => setSelectedPlayList(item.id)} marginStart={5} width="150px">{item.name}</Button>
-              </ListItem>
-            })}
-            <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }}>Liked Songs</Button>
-          </List>
+        <Show above='lg'>
+          <GridItem area={"side"}>
+            <Heading paddingTop={5} paddingLeft={6}>Genres</Heading>
+            <List >
+              {EndPoints.map(item => {
+                return <ListItem marginY={1.5} key={item.id}>
+                  <Button onClick={() => setSelectedPlayList(item.id)} marginStart={5} width="150px">{item.name}</Button>
+                </ListItem>
+              })}
+              <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }}>Liked Songs</Button>
+            </List>
+          </GridItem>
+        </Show>
+
+
+        <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
+
+          {<MusicList musicArray={DummyData.tracks.data} />}
+          {/* {displayMusic && <MusicList musicArray={displayMusic} />} */}
+
         </GridItem>
 
-
-        <GridItem paddingStart={10} paddingTop={5} area={"main"}>
-
-          {/* {res.data && <MusicList musicArray={res.data.tracks.data} />} */}
-          {displayMusic && <MusicList musicArray={displayMusic} />}
-
-        </GridItem>
-
-      </Grid>
+      </Grid >
       <MusicPlayerControls />
     </>
   )
