@@ -1,5 +1,5 @@
 import { Button, HStack, Image, Text } from "@chakra-ui/react";
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { BsFillHeartFill, BsHeart } from "react-icons/bs";
 import { useGlobalAudioPlayer } from "react-use-audio-player";
 import AddLikedSongToDB from "../Services/AddLikedSongToDB";
@@ -13,17 +13,18 @@ import "./styles/imageRotation.css";
 
 
 export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
-    const { currentMusicID } = useMusicPlayerData()
+    const { currentMusicID, singleLooping } = useMusicPlayerData()
     const { likedSongs, setLikedSongs } = useLikedSongs()
     const player = useGlobalAudioPlayer()
     const { PlayMusic } = MusicPlayer()
-    const [musicPos, setMusicPos] = useState(0)
+    // const [musicPos, setMusicPos] = useState(0)
     const { isAuthenticated } = OnUserSignIN()
     const { setPlayList } = useMusicPlayerData()
 
 
     useEffect(() => {
-        setInterval(() => setMusicPos(Math.floor(player.getPosition())), 1000)
+        // setInterval(() => setMusicPos(Math.floor(player.getPosition())), 1000)
+
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -35,7 +36,7 @@ export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
             if (music.preview) return (
 
                 <HStack fontSize="30" key={music.id} marginY="10px">
-                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_small || hero} boxSize="15%" maxH="100px" maxW="100px" borderRadius="50%" bgColor="white" />
+                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_medium || hero} boxSize="15%" maxH="100px" maxW="100px" borderRadius="50%" bgColor="white" />
                     <div>
                         <Text w="100%" fontSize="50%">{"Artist: " + music.artist.name}</Text>
                         <Text w={{ base: "47vw", lg: "30vw" }} fontSize={{ base: "60%", lg: "100%" }} marginTop="1%">{music.title}</Text>
@@ -55,7 +56,7 @@ export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
                         {music.id === currentMusicID ? (player.playing ? "Pause" : player.isLoading ? "Loading..." : "Play") : "Play"}
                     </Button>
 
-                    {music.preview === player.src && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>}
+                    {/* {music.preview === player.src && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>} */}
                     {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill size={{}} onClick={() => {
                         DeleteLikedSongFormDB(music.id)
                         setLikedSongs(likedSongs.filter(song => song.id !== music.id))

@@ -17,7 +17,12 @@ interface MusicPlayerProps{
     nextSong: number
     setNextSong: (nextSong: number) => void
     currentMusicID: number
-    setCurrentMusicID:(CurrentMusicID:number)=>void
+    setCurrentMusicID: (CurrentMusicID: number) => void
+    looping: boolean
+    setLooping: (looping: boolean) => void
+    singleLooping: boolean
+    setSingleLooping: (singleLooping: boolean) => void
+    
 }
 
 interface LikedSongsProps{
@@ -40,10 +45,14 @@ export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
     currentSong: 0,
     nextSong: 1,
     previousSong: 0,
-    currentMusicID:0,
+    currentMusicID: 0,
+    looping:false,
+    singleLooping:false,
     setCurrentSong:(newCurrentSong)=>set(()=>({currentSong:newCurrentSong})),
     setNextSong:(newNextSong)=>set(()=>({nextSong:newNextSong})),
     setPreviousSong: (newPreviousSong) => set(() => ({ previousSong: newPreviousSong })),
     setPlayList: (newPlayList) => set(() => ({ playList: newPlayList })),
-    setCurrentMusicID:(newCurrentMusicID)=>set(()=>({currentMusicID:newCurrentMusicID}))
+    setCurrentMusicID: (newCurrentMusicID) => set(() => ({ currentMusicID: newCurrentMusicID })),
+    setLooping:(newLooping)=>set(()=>({looping:newLooping})),
+    setSingleLooping:(newSingleLooping)=>set(()=>({singleLooping:newSingleLooping}))
 }))

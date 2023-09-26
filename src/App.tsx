@@ -18,8 +18,8 @@ import DummyData from './Services/DummyData';
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
   // const searchRes = SearchMusicByArtist({ artistName: searchText })
-  const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
-  // console.log(res.data);
+  // const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
+  const res = { data: DummyData }
 
 
   const { likedSongs, setLikedSongs } = useLikedSongs()
@@ -50,7 +50,6 @@ function App() {
   })
 
   useEffect(() => {
-    // setDisplayMusic(DummyData.tracks.data)
     if (res.data) {
       setDisplayMusic(res.data.tracks.data)
     }
@@ -86,8 +85,7 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
 
-          {<MusicList musicArray={DummyData.tracks.data} />}
-          {/* {displayMusic && <MusicList musicArray={displayMusic} />} */}
+          {displayMusic && <MusicList musicArray={displayMusic} />}
 
         </GridItem>
 
