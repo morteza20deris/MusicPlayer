@@ -4,16 +4,15 @@ import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
 import { MusicPlayerControls } from './Components/MusicPlayerControls';
 import NavBar from "./Components/NavBar";
-import { Authentication, db } from './Configs/Firebase';
-import EndPoints from "./Services/TopGenreEndPoints";
-import { OnUserSignIN } from './Services/OnUserSignIn';
 import { TrackProps } from './Components/Props';
+import { Authentication, db } from './Configs/Firebase';
+import { OnUserSignIN } from './Services/OnUserSignIn';
+import EndPoints from "./Services/TopGenreEndPoints";
 // import DummyData from './Services/DummyData';
-import { useLikedSongs } from './hooks/useDataStore';
 import { useQuery } from '@tanstack/react-query';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';
-import DummyData from './Services/DummyData';
+import { useLikedSongs } from './hooks/useDataStore';
 
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
@@ -41,7 +40,7 @@ function App() {
     queryKey: [Authentication.currentUser?.uid],
     queryFn: () => {
       if (isAuthenticated) {
-        // return getMyLikedSongs()
+        return getMyLikedSongs()
       } else {
         return []
       }
@@ -86,8 +85,8 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
 
-          {<MusicList musicArray={DummyData.tracks.data} />}
-          {/* {displayMusic && <MusicList musicArray={displayMusic} />} */}
+          {/* {<MusicList musicArray={DummyData.tracks.data} />} */}
+          {displayMusic && <MusicList musicArray={displayMusic} />}
 
         </GridItem>
 
