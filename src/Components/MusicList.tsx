@@ -34,13 +34,13 @@ export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
         {musicArray.map((music, index) => {
             if (music.preview) return (
 
-                <HStack key={music.id} marginY="10px">
+                <HStack fontSize="30" key={music.id} marginY="10px">
                     <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_small || hero} boxSize="15%" maxH="100px" maxW="100px" borderRadius="50%" bgColor="white" />
                     <div>
-                        <Text marginTop="1%" w="30vw" fontSize="2vw">{"Artist: " + music.artist.name}</Text>
-                        <Text w="46vw" fontSize="3vw" marginTop="1%">{music.title}</Text>
+                        <Text w="100%" fontSize="50%">{"Artist: " + music.artist.name}</Text>
+                        <Text w={{ base: "47vw", lg: "30vw" }} fontSize={{ base: "60%", lg: "100%" }} marginTop="1%">{music.title}</Text>
                     </div>
-                    <Button onClick={() => {
+                    <Button size="md" onClick={() => {
                         if (music.id === currentMusicID && player.src) {
                             player.togglePlayPause()
 
@@ -56,7 +56,7 @@ export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
                     </Button>
 
                     {music.preview === player.src && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>}
-                    {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill onClick={() => {
+                    {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill size={{}} onClick={() => {
                         DeleteLikedSongFormDB(music.id)
                         setLikedSongs(likedSongs.filter(song => song.id !== music.id))
                     }} color="green" /> : <BsHeart onClick={() => {

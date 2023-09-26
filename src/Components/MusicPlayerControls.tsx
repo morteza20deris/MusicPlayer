@@ -22,7 +22,7 @@ export const MusicPlayerControls = () => {
     }, [])
 
     return (
-        <div style={{ position: 'fixed', bottom: "0", zIndex: 999, height: "15vh", width: "100vw" }}>
+        <div style={{ position: 'fixed', bottom: "0", zIndex: 999, height: "25vh", maxHeight: "100px", width: "100vw" }}>
 
             <VStack height="100%" background="gray.900" >
                 <Box width="97vw">
