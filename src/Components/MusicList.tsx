@@ -1,59 +1,60 @@
 import { Button, HStack, Image, Text } from "@chakra-ui/react";
 import { useEffect } from 'react';
 import { BsFillHeartFill, BsHeart } from "react-icons/bs";
-import { useGlobalAudioPlayer } from "react-use-audio-player";
 import AddLikedSongToDB from "../Services/AddLikedSongToDB";
 import DeleteLikedSongFormDB from "../Services/DeleteLikedSongFormDB";
 import { OnUserSignIN } from "../Services/OnUserSignIn";
 import hero from "../assets/hero.png";
 import { useLikedSongs, useMusicPlayerData } from "../hooks/useDataStore";
-import { MusicPlayer } from '../hooks/useMusicPlayer';
-import { TrackProps } from "./Props";
+import { AmplitudeSongProps } from "./Props";
 import "./styles/imageRotation.css";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import amplitude from "amplitudejs";
 
-export const MusicList = ({ musicArray }: { musicArray: TrackProps[] }) => {
-    const { currentMusicID, singleLooping } = useMusicPlayerData()
+
+export const MusicList = ({ musicArray }: { musicArray: AmplitudeSongProps[] }) => {
     const { likedSongs, setLikedSongs } = useLikedSongs()
-    const player = useGlobalAudioPlayer()
-    const { PlayMusic } = MusicPlayer()
     // const [musicPos, setMusicPos] = useState(0)
     const { isAuthenticated } = OnUserSignIN()
-    const { setPlayList } = useMusicPlayerData()
+    // const { setPlayList } = useMusicPlayerData()
+    const test = amplitude.getSongsState() as AmplitudeSongProps[]
 
-
+    const { isPlaying, setIsPlaying, readyToPlay } = useMusicPlayerData()
     useEffect(() => {
-        // setInterval(() => setMusicPos(Math.floor(player.getPosition())), 1000)
-
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
+    }, [amplitude.getPlayerState])
 
 
     return (<>
-        {musicArray.map((music, index) => {
-            if (music.preview) return (
+        {test.map((music) => {
+            return (
 
                 <HStack fontSize="30" key={music.id} marginY="10px">
-                    <Image className={music.preview === player.src && player.playing ? "rotation-class" : ""} src={music.album.cover_medium || hero} boxSize="15%" maxH="100px" maxW="100px" borderRadius="50%" bgColor="white" />
+                    <Image className={music.id === amplitude.getActiveSongMetadata().id && amplitude.getPlayerState() === "playing" ? "rotation-class" : ""} src={music.cover_art_url || hero} boxSize="15%" maxH="100px" maxW="100px" borderRadius="50%" bgColor="white" />
                     <div>
-                        <Text w="100%" fontSize="50%">{"Artist: " + music.artist.name}</Text>
-                        <Text w={{ base: "47vw", lg: "30vw" }} fontSize={{ base: "60%", lg: "100%" }} marginTop="1%">{music.title}</Text>
+                        <Text w="100%" fontSize="50%">{"Artist: " + music.artist}</Text>
+                        <Text w={{ base: "47vw", lg: "30vw" }} fontSize={{ base: "60%", lg: "100%" }} marginTop="1%">{music.name}</Text>
                     </div>
-                    <Button size="md" onClick={() => {
-                        if (music.id === currentMusicID && player.src) {
-                            player.togglePlayPause()
 
+                    //play Button
+                    <Button onClick={() => {
+                        // console.log(isPlaying);
+                        if (amplitude.getPlayerState() === "playing" && music.id === amplitude.getActiveSongMetadata().id) {
+                            amplitude.pause()
+                        } else if (music.id === amplitude.getActiveSongMetadata().id) {
+                            amplitude.play()
                         } else {
+                            amplitude.playNow(music)
 
-                            PlayMusic({ newPlayList: musicArray, songIndex: index })
-                            setPlayList(musicArray)
 
                         }
 
-                    }}>
-                        {music.id === currentMusicID ? (player.playing ? "Pause" : player.isLoading ? "Loading..." : "Play") : "Play"}
+                        setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)
+                    }} size="md" >
+                        {music.id === amplitude.getActiveSongMetadata().id ? (amplitude.getPlayerState() === "playing" ? readyToPlay ? "Pause" : "Loading..." : "Play") : "Play"}
                     </Button>
 
                     {/* {music.preview === player.src && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>} */}

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 // import DummyData from "../Services/DummyData"
-import { TrackProps } from "../Components/Props"
+import { AmplitudeSongProps, TrackProps } from "../Components/Props"
 
 interface searchInputProps{
     searchText: string
@@ -18,16 +18,16 @@ interface MusicPlayerProps{
     setNextSong: (nextSong: number) => void
     currentMusicID: number
     setCurrentMusicID: (CurrentMusicID: number) => void
-    looping: boolean
-    setLooping: (looping: boolean) => void
-    singleLooping: boolean
-    setSingleLooping: (singleLooping: boolean) => void
+    isPlaying: boolean
+    setIsPlaying: (newIsPlaying: boolean) => void
+    readyToPlay: boolean
+    setReadyToPlay: (newReadyToPlay: boolean) => void
     
 }
 
 interface LikedSongsProps{
-    likedSongs: TrackProps[]
-    setLikedSongs:(likedSongs:TrackProps[])=>void
+    likedSongs: AmplitudeSongProps[]
+    setLikedSongs:(likedSongs:AmplitudeSongProps[])=>void
 }
 
 export const useSearchInputData = create<searchInputProps>((set) => ({
@@ -37,7 +37,7 @@ export const useSearchInputData = create<searchInputProps>((set) => ({
 
 export const useLikedSongs = create<LikedSongsProps>(set => ({
     likedSongs: [],
-    setLikedSongs: (newLikedSongs:TrackProps[])=>set(()=>({likedSongs:newLikedSongs}))
+    setLikedSongs: (newLikedSongs:AmplitudeSongProps[])=>set(()=>({likedSongs:newLikedSongs}))
 }))
 
 export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
@@ -46,13 +46,13 @@ export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
     nextSong: 1,
     previousSong: 0,
     currentMusicID: 0,
-    looping:false,
-    singleLooping:false,
+    isPlaying:false,
+    readyToPlay:false,
     setCurrentSong:(newCurrentSong)=>set(()=>({currentSong:newCurrentSong})),
     setNextSong:(newNextSong)=>set(()=>({nextSong:newNextSong})),
     setPreviousSong: (newPreviousSong) => set(() => ({ previousSong: newPreviousSong })),
     setPlayList: (newPlayList) => set(() => ({ playList: newPlayList })),
     setCurrentMusicID: (newCurrentMusicID) => set(() => ({ currentMusicID: newCurrentMusicID })),
-    setLooping:(newLooping)=>set(()=>({looping:newLooping})),
-    setSingleLooping:(newSingleLooping)=>set(()=>({singleLooping:newSingleLooping}))
+    setIsPlaying:(newIsPlaying)=>set(()=>({isPlaying:newIsPlaying})),
+    setReadyToPlay:(newSingleLooping)=>set(()=>({readyToPlay:newSingleLooping}))
 }))

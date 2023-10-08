@@ -4,33 +4,35 @@ import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
 import { MusicPlayerControls } from './Components/MusicPlayerControls';
 import NavBar from "./Components/NavBar";
-import { TrackProps } from './Components/Props';
+import { AmplitudeSongProps } from './Components/Props';
 import { Authentication, db } from './Configs/Firebase';
 import { OnUserSignIN } from './Services/OnUserSignIn';
 import EndPoints from "./Services/TopGenreEndPoints";
 // import DummyData from './Services/DummyData';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
+import amplitude from 'amplitudejs';
 import { useQuery } from '@tanstack/react-query';
-import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';
 import { useLikedSongs } from './hooks/useDataStore';
 import DummyData from './Services/DummyData';
 
 function App() {
-  const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
+  const [, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
   // const searchRes = SearchMusicByArtist({ artistName: searchText })
   // const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
   const res = { data: DummyData }
 
 
   const { likedSongs, setLikedSongs } = useLikedSongs()
-  const [displayMusic, setDisplayMusic] = useState<TrackProps[]>()
+  const [displayMusic, setDisplayMusic] = useState<AmplitudeSongProps[]>()
 
   const UserLikedSongsCollection = collection(db, Authentication.currentUser?.uid + "",)
   const { isAuthenticated } = OnUserSignIN()
 
   const getMyLikedSongs = async () => {
     const data = await getDocs(UserLikedSongsCollection)
-    const filteredData = data.docs.map(dt => ({ ...dt.data() })) as TrackProps[]
+    const filteredData = data.docs.map(dt => ({ ...dt.data() })) as AmplitudeSongProps[]
     console.log(filteredData)
     setLikedSongs(filteredData)
     return filteredData
@@ -51,7 +53,7 @@ function App() {
 
   useEffect(() => {
     if (res.data) {
-      setDisplayMusic(res.data.tracks.data)
+      setDisplayMusic(amplitude.getSongsState() as AmplitudeSongProps[])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res.data])
@@ -85,7 +87,7 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
 
-          {displayMusic && <MusicList musicArray={displayMusic} />}
+          {displayMusic && <MusicList musicArray={displayMusic || []} />}
 
         </GridItem>
 

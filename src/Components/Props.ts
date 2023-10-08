@@ -77,3 +77,12 @@ export interface UserProps{
     verified_email: boolean
     
 }
+
+export interface AmplitudeSongProps{
+    name: string,
+    artist: string,
+    album: string,
+    url: string,
+    cover_art_url: string,
+    id: number
+}

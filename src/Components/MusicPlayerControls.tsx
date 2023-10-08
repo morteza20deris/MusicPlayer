@@ -1,46 +1,38 @@
-import { Box, Button, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, VStack, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, VStack } from '@chakra-ui/react';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import amplitude from "amplitudejs";
 import { useEffect, useState } from 'react';
+import { LuRepeat, LuRepeat1, LuShuffle } from "react-icons/lu";
 import { MdGraphicEq } from "react-icons/md";
-import { LuShuffle, LuRepeat1, LuRepeat } from "react-icons/lu";
-import { TbRepeatOff } from "react-icons/tb";
-import { useGlobalAudioPlayer } from 'react-use-audio-player';
-import { MusicPlayer } from '../hooks/useMusicPlayer';
+import DummyData from '../Services/DummyData';
 import { useMusicPlayerData } from '../hooks/useDataStore';
 
 export const MusicPlayerControls = () => {
-    const { currentSong, playList, setPlayList, setLooping, setSingleLooping, singleLooping } = useMusicPlayerData()
-    const { togglePlayPause, playing, getPosition, duration, seek } = useGlobalAudioPlayer()
-    const { PlayNextMusic, PlayPreviousMusic } = MusicPlayer()
     const [musicPos, setMusicPos] = useState(0)
+    const { setIsPlaying, setReadyToPlay, readyToPlay } = useMusicPlayerData()
+    // const percentageToMusicLength = (percentage: number) => (amplitude.getSongDuration() / 100) * percentage
 
-    const percentageToMusicLength = (percentage: number) => (duration / 100) * percentage
+    const getSeekPosFromMusic = amplitude.getSongDuration() ? ((1 - (((amplitude.getSongDuration()) - musicPos) / (amplitude.getSongDuration()))) * 100) : 0
 
-    const getSeekPosFromMusic = duration ? ((1 - (((duration) - musicPos) / (duration))) * 100) : 0
-    const [loopState, setLoopState] = useState(0)
-    const shuffleClickHandler = () => {
-        setPlayList(playList.sort(() => Math.random() - 0.5))
-    }
+    const [loopState, setLoopState] = useState(1)
+
+
 
     const loopClickHandler = () => {
 
         switch (loopState) {
-            case 0:
-                setLoopState(1)
-                setLooping(true)
-
-                break;
             case 1:
+                amplitude.setRepeatSong(true)
+                // amplitude.setRepeatPlaylist("ancient_astronauts", false)
                 setLoopState(2)
-                setLooping(false)
-
-                setSingleLooping(true)
 
                 break;
             case 2:
-                console.log("don");
-                setLoopState(0)
+                // console.log("don");
+                setLoopState(1)
+                amplitude.setRepeatSong(false)
 
-                setSingleLooping(false)
 
                 break;
             default:
@@ -50,13 +42,48 @@ export const MusicPlayerControls = () => {
     }
 
     useEffect(() => {
+        const test = DummyData.tracks.data.filter(song => song.preview.length > 0)
 
-        console.log("MPCLooping: ", loopState, singleLooping);
 
-    }, [singleLooping])
+
+        amplitude.init({
+            songs: test.map(song => {
+
+                return {
+                    name: song.title,
+                    artist: song.artist.name,
+                    album: song.album.title,
+                    url: song.preview,
+                    cover_art_url: song.album.cover_medium,
+                    id: song.id
+                }
+
+
+            }),
+            playlists: {
+                "ancient_astronauts": {
+                    songs: [...Array(test.length).keys()],
+                    title: 'Best of Ancient Astronauts'
+                }
+            },
+            callbacks: {
+                loadeddata: function () { setReadyToPlay(true) },
+                loadstart: function () { setReadyToPlay(false) },
+                ended: function () {
+                    console.log("stopping");
+                    amplitude.pause()
+                }
+            }
+        });
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+
+
 
     useEffect(() => {
-        setInterval(() => setMusicPos(Math.round((getPosition() + Number.EPSILON) * 100) / 100), 10)
+        setInterval(() => setMusicPos(Math.round((amplitude.getSongPlayedSeconds() + Number.EPSILON) * 100) / 100), 10)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -66,12 +93,10 @@ export const MusicPlayerControls = () => {
             <VStack align="start" height="100%" background="gray.900" >
                 <HStack width="100%" alignContent="center" justifyContent="space-between">
                     <Text paddingStart="1%" paddingTop="-0.5" height="0">{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>
-                    <Text paddingEnd="1%" paddingTop="-0.5" height="0">{new Date(duration * 1000).toISOString().slice(14, 19)}</Text>
+                    <Text paddingEnd="1%" paddingTop="-0.5" height="0">{new Date((amplitude.getSongDuration() || 0) * 1000).toISOString().slice(14, 19)}</Text>
                 </HStack>
                 <Box paddingStart="2%" marginTop="4" width="97vw">
-                    <Slider onChange={(e) => {
-                        seek(percentageToMusicLength(e))
-                    }} value={getSeekPosFromMusic} aria-label='slider-ex-4' defaultValue={0}>
+                    <Slider value={getSeekPosFromMusic} onChange={(e) => { amplitude.setSongPlayedPercentage(e) }} aria-label='slider-ex-4' defaultValue={0}>
                         <SliderTrack bg='red.100'>
                             <SliderFilledTrack bg='tomato' />
                         </SliderTrack>
@@ -83,22 +108,23 @@ export const MusicPlayerControls = () => {
 
                 <HStack width="100vw" paddingX={6} alignContent="center" justifyContent="space-between" >
                     <Box>
-                        <Button isActive={currentSong === 0} onClick={() => {
-                            PlayPreviousMusic()
-                            // console.log("clicked previous");
-                        }} >Previous</Button>
+                        <Button className='amplitude-prev' isActive={amplitude.getActiveIndex() === 0} >Previous</Button>
                     </Box>
                     <HStack>
-                        <LuShuffle onClick={shuffleClickHandler} size="20px" />
-                        <Button onClick={() => togglePlayPause()}>{playing ? "Pause" : "Play"}</Button>
+                        <LuShuffle color={amplitude.getShuffle() === true && "green" || ""} onClick={() => setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)} className="amplitude-shuffle" size="20px" />
+                        <Button onClick={() => {
+                            console.log(amplitude.getSongsState());
+                            console.log(amplitude.getShuffle());
+                            setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)
 
-                        {loopState === 0 && <TbRepeatOff onClick={loopClickHandler} size="20px" />}
+                        }} className="amplitude-play-pause" >{amplitude.getPlayerState() === "playing" ? readyToPlay ? "Pause" : "Loading..." : "Play"}</Button>
+
+
+
                         {loopState === 1 && <LuRepeat color="green" onClick={loopClickHandler} size="20px" />}
                         {loopState === 2 && <LuRepeat1 color="green" onClick={loopClickHandler} size="20px" />}
                     </HStack>
-                    <Button onClick={() => {
-                        PlayNextMusic()
-                    }} >Next</Button>
+                    <Button className='amplitude-next' data-amplitude-playlist="ancient_astronauts" >Next</Button>
                 </HStack>
             </VStack>
 

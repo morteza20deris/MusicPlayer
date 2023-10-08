@@ -1,8 +1,8 @@
 import { setDoc, doc } from "firebase/firestore";
-import { TrackProps } from "../Components/Props";
+import { AmplitudeSongProps } from "../Components/Props";
 import { Authentication, db } from "../Configs/Firebase";
 
-async function AddLikedSongToDB(likedSong: TrackProps) {
+async function AddLikedSongToDB(likedSong: AmplitudeSongProps) {
 
     await setDoc(doc(db, Authentication.currentUser?.uid+"", likedSong.id + ""), likedSong).catch(e => console.log(e));
 }
