@@ -90,7 +90,7 @@ export const MusicPlayerControls = () => {
 
                     </HStack>
 
-                    <Button className='amplitude-next' data-amplitude-playlist="ancient_astronauts" >Next</Button>
+                    <Button className='amplitude-next' >Next</Button>
 
                 </HStack>
             </VStack>
