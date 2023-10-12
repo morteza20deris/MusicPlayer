@@ -43,7 +43,7 @@ const NavBar = () => {
                             boxSize={50}
                             borderRadius={100}
                             src={user?.user.photoURL || Authentication.currentUser?.photoURL || undefined}
-                            alt='User Picture'
+
                             onClick={() => {
                                 logOut()
                                 setTimeout(() => {

@@ -59,7 +59,7 @@ export const MusicList = () => {
                     </Button>
 
                     {/* {music.preview === player.src && player.playing && <Text marginTop={4}>{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>} */}
-                    {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill size={{}} onClick={() => {
+                    {likedSongs.find((song) => song.id == music.id) ? <BsFillHeartFill onClick={() => {
                         DeleteLikedSongFormDB(music.id)
                         setLikedSongs(likedSongs.filter(song => song.id !== music.id))
                     }} color="green" /> : <BsHeart onClick={() => {
