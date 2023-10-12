@@ -1,4 +1,4 @@
-import { Button, HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Button, HStack, Image, Text } from "@chakra-ui/react";
 import { useEffect } from 'react';
 import { BsFillHeartFill, BsHeart } from "react-icons/bs";
 import AddLikedSongToDB from "../Services/AddLikedSongToDB";
@@ -30,7 +30,7 @@ export const MusicList = () => {
     }, [])
 
 
-    return (<>
+    return (<Box marginBottom="15vh">
         {test.map((music, songIndex) => {
             return (
 
@@ -74,7 +74,7 @@ export const MusicList = () => {
                 </HStack >
             )
         })}
-    </>)
+    </Box>)
 
 
 }
