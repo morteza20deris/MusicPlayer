@@ -14,22 +14,24 @@ import "./styles/imageRotation.css";
 import amplitude from "amplitudejs";
 
 
-export const MusicList = ({ musicArray }: { musicArray: AmplitudeSongProps[] }) => {
+export const MusicList = () => {
     const { likedSongs, setLikedSongs } = useLikedSongs()
     // const [musicPos, setMusicPos] = useState(0)
     const { isAuthenticated } = OnUserSignIN()
     // const { setPlayList } = useMusicPlayerData()
-    const test = amplitude.getSongsState() as AmplitudeSongProps[]
+    const test = amplitude.getSongsInPlaylist("ancient_astronauts") as AmplitudeSongProps[]
 
-    const { isPlaying, setIsPlaying, readyToPlay } = useMusicPlayerData()
+    const { setIsPlaying, readyToPlay } = useMusicPlayerData()
     useEffect(() => {
 
+
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [amplitude.getPlayerState])
+    }, [])
 
 
     return (<>
-        {test.map((music) => {
+        {test.map((music, songIndex) => {
             return (
 
                 <HStack fontSize="30" key={music.id} marginY="10px">
@@ -41,13 +43,12 @@ export const MusicList = ({ musicArray }: { musicArray: AmplitudeSongProps[] }) 
 
                     //play Button
                     <Button onClick={() => {
-                        // console.log(isPlaying);
                         if (amplitude.getPlayerState() === "playing" && music.id === amplitude.getActiveSongMetadata().id) {
                             amplitude.pause()
                         } else if (music.id === amplitude.getActiveSongMetadata().id) {
                             amplitude.play()
                         } else {
-                            amplitude.playNow(music)
+                            amplitude.playSongAtIndex(songIndex)
 
 
                         }

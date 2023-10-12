@@ -8,21 +8,19 @@ import { AmplitudeSongProps } from './Components/Props';
 import { Authentication, db } from './Configs/Firebase';
 import { OnUserSignIN } from './Services/OnUserSignIn';
 import EndPoints from "./Services/TopGenreEndPoints";
-// import DummyData from './Services/DummyData';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import amplitude from 'amplitudejs';
 import { useQuery } from '@tanstack/react-query';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';
-import { useLikedSongs } from './hooks/useDataStore';
-import DummyData from './Services/DummyData';
+import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
+import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 
 function App() {
-  const [, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
+  const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
   // const searchRes = SearchMusicByArtist({ artistName: searchText })
-  // const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
-  const res = { data: DummyData }
-
+  const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
+  const { setReadyToPlay } = useMusicPlayerData()
 
   const { likedSongs, setLikedSongs } = useLikedSongs()
   const [displayMusic, setDisplayMusic] = useState<AmplitudeSongProps[]>()
@@ -53,6 +51,37 @@ function App() {
 
   useEffect(() => {
     if (res.data) {
+      const test = res.data.tracks.data.filter(song => song.preview.length > 0)
+
+
+      amplitude.init({
+        songs: test.map(song => {
+
+          return {
+            name: song.title,
+            artist: song.artist.name,
+            album: song.album.title,
+            url: song.preview,
+            cover_art_url: song.album.cover_medium,
+            id: song.id
+          }
+
+
+        }),
+        playlists: {
+          "ancient_astronauts": {
+            songs: [...Array(test.length).keys()],
+            title: 'Best of Ancient Astronauts'
+          }
+        },
+        callbacks: {
+          loadeddata: function () { setReadyToPlay(true) },
+          loadstart: function () { setReadyToPlay(false) },
+          ended: function () {
+            amplitude.pause()
+          }
+        }
+      });
       setDisplayMusic(amplitude.getSongsState() as AmplitudeSongProps[])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,7 +116,7 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
 
-          {displayMusic && <MusicList musicArray={displayMusic || []} />}
+          {displayMusic && <MusicList />}
 
         </GridItem>
 

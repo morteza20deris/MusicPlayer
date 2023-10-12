@@ -5,12 +5,12 @@ import amplitude from "amplitudejs";
 import { useEffect, useState } from 'react';
 import { LuRepeat, LuRepeat1, LuShuffle } from "react-icons/lu";
 import { MdGraphicEq } from "react-icons/md";
-import DummyData from '../Services/DummyData';
 import { useMusicPlayerData } from '../hooks/useDataStore';
 
 export const MusicPlayerControls = () => {
     const [musicPos, setMusicPos] = useState(0)
-    const { setIsPlaying, setReadyToPlay, readyToPlay } = useMusicPlayerData()
+    const { setIsPlaying, readyToPlay } = useMusicPlayerData()
+    const [shuffleState, setShuffleState] = useState(false)
     // const percentageToMusicLength = (percentage: number) => (amplitude.getSongDuration() / 100) * percentage
 
     const getSeekPosFromMusic = amplitude.getSongDuration() ? ((1 - (((amplitude.getSongDuration()) - musicPos) / (amplitude.getSongDuration()))) * 100) : 0
@@ -24,62 +24,18 @@ export const MusicPlayerControls = () => {
         switch (loopState) {
             case 1:
                 amplitude.setRepeatSong(true)
-                // amplitude.setRepeatPlaylist("ancient_astronauts", false)
                 setLoopState(2)
 
                 break;
             case 2:
-                // console.log("don");
                 setLoopState(1)
                 amplitude.setRepeatSong(false)
-
-
                 break;
             default:
                 break;
         }
 
     }
-
-    useEffect(() => {
-        const test = DummyData.tracks.data.filter(song => song.preview.length > 0)
-
-
-
-        amplitude.init({
-            songs: test.map(song => {
-
-                return {
-                    name: song.title,
-                    artist: song.artist.name,
-                    album: song.album.title,
-                    url: song.preview,
-                    cover_art_url: song.album.cover_medium,
-                    id: song.id
-                }
-
-
-            }),
-            playlists: {
-                "ancient_astronauts": {
-                    songs: [...Array(test.length).keys()],
-                    title: 'Best of Ancient Astronauts'
-                }
-            },
-            callbacks: {
-                loadeddata: function () { setReadyToPlay(true) },
-                loadstart: function () { setReadyToPlay(false) },
-                ended: function () {
-                    console.log("stopping");
-                    amplitude.pause()
-                }
-            }
-        });
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-
 
 
     useEffect(() => {
@@ -91,11 +47,15 @@ export const MusicPlayerControls = () => {
         <div style={{ position: 'fixed', bottom: "0", zIndex: 999, height: "32vh", maxHeight: "110px", width: "100vw" }}>
 
             <VStack align="start" height="100%" background="gray.900" >
+
+                // Track Timing
                 <HStack width="100%" alignContent="center" justifyContent="space-between">
-                    <Text paddingStart="1%" paddingTop="-0.5" height="0">{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>
-                    <Text paddingEnd="1%" paddingTop="-0.5" height="0">{new Date((amplitude.getSongDuration() || 0) * 1000).toISOString().slice(14, 19)}</Text>
+                    <Text paddingStart="3%" paddingTop="-0.5" height="0">{new Date(musicPos * 1000).toISOString().slice(14, 19)}</Text>
+                    <Text paddingEnd="3%" paddingTop="-0.5" height="0">{new Date((amplitude.getSongDuration() || 0) * 1000).toISOString().slice(14, 19)}</Text>
                 </HStack>
-                <Box paddingStart="2%" marginTop="4" width="97vw">
+
+                // Track Slider
+                <Box paddingStart="3%" marginTop="4" width="100%" paddingEnd="3%">
                     <Slider value={getSeekPosFromMusic} onChange={(e) => { amplitude.setSongPlayedPercentage(e) }} aria-label='slider-ex-4' defaultValue={0}>
                         <SliderTrack bg='red.100'>
                             <SliderFilledTrack bg='tomato' />
@@ -106,25 +66,32 @@ export const MusicPlayerControls = () => {
                     </Slider>
                 </Box>
 
-                <HStack width="100vw" paddingX={6} alignContent="center" justifyContent="space-between" >
-                    <Box>
-                        <Button className='amplitude-prev' isActive={amplitude.getActiveIndex() === 0} >Previous</Button>
-                    </Box>
+                // Music Player Buttons
+                <HStack width="100vw" paddingX="3%" alignContent="center" justifyContent="space-between" >
+
+                    <Button className='amplitude-prev' isActive={amplitude.getActiveIndex() === 0} >Previous</Button>
+
                     <HStack>
-                        <LuShuffle color={amplitude.getShuffle() === true && "green" || ""} onClick={() => setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)} className="amplitude-shuffle" size="20px" />
-                        <Button onClick={() => {
-                            console.log(amplitude.getSongsState());
-                            console.log(amplitude.getShuffle());
+                        <LuShuffle className="amplitude-shuffle" color={shuffleState === true ? "green" : ""} onClick={() => {
+
+                            setShuffleState(!shuffleState)
                             setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)
+                        }} size="20px" />
 
-                        }} className="amplitude-play-pause" >{amplitude.getPlayerState() === "playing" ? readyToPlay ? "Pause" : "Loading..." : "Play"}</Button>
+                        <Button className="amplitude-play-pause" onClick={() => {
 
+                            setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)
+                            console.log(amplitude.getRepeatPlaylist("ancient_astronauts"));
 
+                        }}>{amplitude.getPlayerState() === "playing" ? readyToPlay ? "Pause" : "Loading..." : "Play"}</Button>
 
                         {loopState === 1 && <LuRepeat color="green" onClick={loopClickHandler} size="20px" />}
                         {loopState === 2 && <LuRepeat1 color="green" onClick={loopClickHandler} size="20px" />}
+
                     </HStack>
+
                     <Button className='amplitude-next' data-amplitude-playlist="ancient_astronauts" >Next</Button>
+
                 </HStack>
             </VStack>
 
