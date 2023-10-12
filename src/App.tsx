@@ -15,13 +15,12 @@ import { useQuery } from '@tanstack/react-query';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';
 import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
-import DummyData from './Services/DummyData';
 
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
   // const searchRes = SearchMusicByArtist({ artistName: searchText })
-  // const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
-  const res = DummyData;
+  const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
+  // const res = DummyData;
   const { setReadyToPlay } = useMusicPlayerData()
 
   const { likedSongs, setLikedSongs } = useLikedSongs()
