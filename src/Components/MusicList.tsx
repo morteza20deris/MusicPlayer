@@ -1,5 +1,4 @@
 import { Box, Button, HStack, Image, Text } from "@chakra-ui/react";
-import { useEffect } from 'react';
 import { BsFillHeartFill, BsHeart } from "react-icons/bs";
 import AddLikedSongToDB from "../Services/AddLikedSongToDB";
 import DeleteLikedSongFormDB from "../Services/DeleteLikedSongFormDB";
@@ -14,24 +13,17 @@ import "./styles/imageRotation.css";
 import amplitude from "amplitudejs";
 
 
-export const MusicList = () => {
+export const MusicList = ({ musicToDisplay }: { musicToDisplay: AmplitudeSongProps[] }) => {
     const { likedSongs, setLikedSongs } = useLikedSongs()
-    // const [musicPos, setMusicPos] = useState(0)
     const { isAuthenticated } = OnUserSignIN()
-    // const { setPlayList } = useMusicPlayerData()
-    const test = amplitude.getSongsInPlaylist("ancient_astronauts") as AmplitudeSongProps[]
-
-    const { setIsPlaying, readyToPlay } = useMusicPlayerData()
-    useEffect(() => {
+    const { setIsPlaying, readyToPlay, playList } = useMusicPlayerData()
 
 
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
 
     return (<Box marginBottom="15vh">
-        {test.map((music, songIndex) => {
+        {musicToDisplay?.map((music, songIndex) => {
             return (
 
                 <HStack fontSize="30" key={music.id} marginY="10px">
@@ -45,10 +37,17 @@ export const MusicList = () => {
                     <Button onClick={() => {
                         if (amplitude.getPlayerState() === "playing" && music.id === amplitude.getActiveSongMetadata().id) {
                             amplitude.pause()
+                            console.log(1);
+
                         } else if (music.id === amplitude.getActiveSongMetadata().id) {
                             amplitude.play()
+                            console.log(2);
+
                         } else {
-                            amplitude.playSongAtIndex(songIndex)
+                            console.log("3");
+
+                            amplitude.stop()
+                            amplitude.playPlaylistSongAtIndex(songIndex, playList)
 
 
                         }

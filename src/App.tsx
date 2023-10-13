@@ -21,7 +21,7 @@ function App() {
   // const searchRes = SearchMusicByArtist({ artistName: searchText })
   const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
   // const res = DummyData;
-  const { setReadyToPlay } = useMusicPlayerData()
+  const { setReadyToPlay, playList, setPlayList } = useMusicPlayerData()
 
   const { likedSongs, setLikedSongs } = useLikedSongs()
   const [displayMusic, setDisplayMusic] = useState<AmplitudeSongProps[]>()
@@ -51,8 +51,27 @@ function App() {
   })
 
   useEffect(() => {
-    if (res.data) {
-      const test = res.data.tracks.data.filter(song => song.preview.length > 0)
+    const test = res.data?.tracks.data.filter(song => song.preview.length > 0)
+
+    const test2 = test?.map(song => {
+
+      return {
+        name: song.title,
+        artist: song.artist.name,
+        album: song.album.title,
+        url: song.preview,
+        cover_art_url: song.album.cover_medium,
+        id: song.id
+      }
+
+
+    })
+    // console.log(test2);
+
+    setDisplayMusic(test2 as AmplitudeSongProps[])
+
+    if (test && test.length > 0 && amplitude.getSongs().length === 0) {
+
 
 
       amplitude.init({
@@ -70,9 +89,9 @@ function App() {
 
         }),
         playlists: {
-          "ancient_astronauts": {
+          [`${selectedPlayList}`]: {
             songs: [...Array(test.length).keys()],
-            title: 'Best of Ancient Astronauts'
+            title: { playList }
           }
         },
         callbacks: {
@@ -83,10 +102,38 @@ function App() {
           }
         }
       });
-      setDisplayMusic(amplitude.getSongsState() as AmplitudeSongProps[])
+
+    }
+
+
+    if (amplitude.getSongs().length !== 0 && test) {
+      const test2 = test.map(song => {
+
+        return {
+          name: song.title,
+          artist: song.artist.name,
+          album: song.album.title,
+          url: song.preview,
+          cover_art_url: song.album.cover_medium,
+          id: song.id
+        }
+
+
+      })
+      amplitude.addPlaylist(selectedPlayList, {
+        callbacks: {
+          loadeddata: function () { setReadyToPlay(true) },
+          loadstart: function () { setReadyToPlay(false) },
+          ended: function () {
+            amplitude.pause()
+          }
+        }
+      }, test2);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [res.data])
+  }, [res.data, playList])
+
+
 
 
 
@@ -106,7 +153,10 @@ function App() {
             <List >
               {EndPoints.map(item => {
                 return <ListItem marginY={1.5} key={item.id}>
-                  <Button onClick={() => setSelectedPlayList(item.id)} marginStart={5} width="150px">{item.name}</Button>
+                  <Button onClick={() => {
+                    setSelectedPlayList(item.id)
+                    setPlayList(item.id)
+                  }} marginStart={5} width="150px">{item.name}</Button>
                 </ListItem>
               })}
               <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }}>Liked Songs</Button>
@@ -117,7 +167,7 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
 
-          {displayMusic && <MusicList />}
+          {displayMusic && <MusicList musicToDisplay={displayMusic} />}
 
         </GridItem>
 

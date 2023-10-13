@@ -1,6 +1,7 @@
 import { create } from "zustand"
 // import DummyData from "../Services/DummyData"
-import { AmplitudeSongProps, TrackProps } from "../Components/Props"
+import { AmplitudeSongProps } from "../Components/Props"
+import TopGenreEndPoints from "../Services/TopGenreEndPoints"
 
 interface searchInputProps{
     searchText: string
@@ -8,8 +9,8 @@ interface searchInputProps{
 }
 
 interface MusicPlayerProps{
-    playList: TrackProps[]
-    setPlayList:(playList:TrackProps[])=>void
+    playList: string
+    setPlayList:(playList:string)=>void
     currentSong:number
     setCurrentSong:(currentSong:number)=>void
     previousSong: number
@@ -41,7 +42,7 @@ export const useLikedSongs = create<LikedSongsProps>(set => ({
 }))
 
 export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
-    playList:[],
+    playList:TopGenreEndPoints[4].id,
     currentSong: 0,
     nextSong: 1,
     previousSong: 0,

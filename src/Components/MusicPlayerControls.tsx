@@ -9,7 +9,7 @@ import { useMusicPlayerData } from '../hooks/useDataStore';
 
 export const MusicPlayerControls = () => {
     const [musicPos, setMusicPos] = useState(0)
-    const { setIsPlaying, readyToPlay } = useMusicPlayerData()
+    const { setIsPlaying, readyToPlay, playList } = useMusicPlayerData()
     const [shuffleState, setShuffleState] = useState(false)
     // const percentageToMusicLength = (percentage: number) => (amplitude.getSongDuration() / 100) * percentage
 
@@ -81,7 +81,7 @@ export const MusicPlayerControls = () => {
                         <Button className="amplitude-play-pause" onClick={() => {
 
                             setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)
-                            console.log(amplitude.getRepeatPlaylist("ancient_astronauts"));
+                            console.log(amplitude.getRepeatPlaylist(playList));
 
                         }}>{amplitude.getPlayerState() === "playing" ? readyToPlay ? "Pause" : "Loading..." : "Play"}</Button>
 
