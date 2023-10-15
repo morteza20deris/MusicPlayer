@@ -15,14 +15,18 @@
 //     artist: ArtistProps
 //     album: AlbumProps
 //     type:string
+
+import { AxiosError } from "axios"
+
     
 // }
 
 export interface PlayListProps{
     tracks:TracksProps
 }
-interface TracksProps{
-    data:TrackProps[]
+export interface TracksProps{
+    data: TrackProps[]
+    error:AxiosError
 }
 export interface TrackProps{
     

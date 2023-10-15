@@ -15,8 +15,8 @@ interface MusicPlayerProps{
     setCurrentSong:(currentSong:number)=>void
     previousSong: number
     setPreviousSong:(previousSong:number)=>void
-    nextSong: number
-    setNextSong: (nextSong: number) => void
+    musicToDisplay: AmplitudeSongProps[]
+    setMusicToDisplay: (newMusicToDisplay: AmplitudeSongProps[]) => void
     currentMusicID: number
     setCurrentMusicID: (CurrentMusicID: number) => void
     isPlaying: boolean
@@ -44,13 +44,13 @@ export const useLikedSongs = create<LikedSongsProps>(set => ({
 export const useMusicPlayerData = create<MusicPlayerProps>((set) => ({
     playList:TopGenreEndPoints[4].id,
     currentSong: 0,
-    nextSong: 1,
+    musicToDisplay: [] as AmplitudeSongProps[],
     previousSong: 0,
     currentMusicID: 0,
     isPlaying:false,
     readyToPlay:false,
     setCurrentSong:(newCurrentSong)=>set(()=>({currentSong:newCurrentSong})),
-    setNextSong:(newNextSong)=>set(()=>({nextSong:newNextSong})),
+    setMusicToDisplay:(newMusicToDisplay)=>set(()=>({musicToDisplay:newMusicToDisplay})),
     setPreviousSong: (newPreviousSong) => set(() => ({ previousSong: newPreviousSong })),
     setPlayList: (newPlayList) => set(() => ({ playList: newPlayList })),
     setCurrentMusicID: (newCurrentMusicID) => set(() => ({ currentMusicID: newCurrentMusicID })),

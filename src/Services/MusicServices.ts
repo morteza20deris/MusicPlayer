@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import ApiClient from "./ApiClient";
-import { PlayListProps } from "../Components/Props";
+import { PlayListProps, TracksProps } from "../Components/Props";
 
 export const SearchMusicByArtist = ({ artistName }: { artistName: string }) => {
      return useQuery({
         queryKey: [artistName],
         queryFn: () => {
-           return ApiClient.get(`/search?q=${artistName}`)
+           return ApiClient.get<TracksProps>(`/search?q=${artistName}`)
                     .then(res=>res.data)
         }
         ,
@@ -21,7 +21,8 @@ export const GetPlayListTracksFromDeezer = ({id}:{id:string}) => {
       queryFn: () => {
          return ApiClient.get<PlayListProps>(`playlist/${id}`)
          .then(res=>res.data)
-      }
+      },
+      staleTime:Infinity
    })
 }
 

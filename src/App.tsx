@@ -12,19 +12,16 @@ import EndPoints from "./Services/TopGenreEndPoints";
 //@ts-ignore
 import amplitude from 'amplitudejs';
 import { useQuery } from '@tanstack/react-query';
-import TopGenreEndPoints from './Services/TopGenreEndPoints';
-import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
+import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
+import getAmplitudeDataFromDeezer from './Services/getAmplitudeDataFromDeezer';
 
 function App() {
-  const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
-  // const searchRes = SearchMusicByArtist({ artistName: searchText })
-  const res = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
-  // const res = DummyData;
-  const { setReadyToPlay, playList, setPlayList } = useMusicPlayerData()
-
+  const [selectedPlayList, setSelectedPlayList] = useState(EndPoints[4].id)
+  const deezerPlaylistTracks = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" }).data
+  const { setReadyToPlay, playList, setPlayList, musicToDisplay, setMusicToDisplay } = useMusicPlayerData()
+  const [first, setFirst] = useState(false)
   const { likedSongs, setLikedSongs } = useLikedSongs()
-  const [displayMusic, setDisplayMusic] = useState<AmplitudeSongProps[]>()
 
   const UserLikedSongsCollection = collection(db, Authentication.currentUser?.uid + "",)
   const { isAuthenticated } = OnUserSignIN()
@@ -38,56 +35,23 @@ function App() {
 
   }
 
-  useQuery({
-    queryKey: [Authentication.currentUser?.uid],
-    queryFn: () => {
-      if (isAuthenticated) {
-        return getMyLikedSongs()
-      } else {
-        return []
-      }
-    },
 
-  })
 
   useEffect(() => {
-    const test = res.data?.tracks.data.filter(song => song.preview.length > 0)
+    if (deezerPlaylistTracks) {
+      setMusicToDisplay(getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data))
+    }
 
-    const test2 = test?.map(song => {
-
-      return {
-        name: song.title,
-        artist: song.artist.name,
-        album: song.album.title,
-        url: song.preview,
-        cover_art_url: song.album.cover_medium,
-        id: song.id
-      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [first])
 
 
-    })
-    // console.log(test2);
-
-    setDisplayMusic(test2 as AmplitudeSongProps[])
-
-    if (test && test.length > 0 && amplitude.getSongs().length === 0) {
-
-
-
+  useEffect(() => {
+    if (amplitude.getSongs().length === 0 && deezerPlaylistTracks) {
+      const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data)
+      setMusicToDisplay(test)
       amplitude.init({
-        songs: test.map(song => {
-
-          return {
-            name: song.title,
-            artist: song.artist.name,
-            album: song.album.title,
-            url: song.preview,
-            cover_art_url: song.album.cover_medium,
-            id: song.id
-          }
-
-
-        }),
+        songs: test,
         playlists: {
           [`${selectedPlayList}`]: {
             songs: [...Array(test.length).keys()],
@@ -102,24 +66,9 @@ function App() {
           }
         }
       });
-
-    }
-
-
-    if (amplitude.getSongs().length !== 0 && test) {
-      const test2 = test.map(song => {
-
-        return {
-          name: song.title,
-          artist: song.artist.name,
-          album: song.album.title,
-          url: song.preview,
-          cover_art_url: song.album.cover_medium,
-          id: song.id
-        }
-
-
-      })
+    } else if (amplitude.getSongs().length > 0 && deezerPlaylistTracks) {
+      const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data)
+      setMusicToDisplay(test)
       amplitude.addPlaylist(selectedPlayList, {
         callbacks: {
           loadeddata: function () { setReadyToPlay(true) },
@@ -128,15 +77,24 @@ function App() {
             amplitude.pause()
           }
         }
-      }, test2);
+      }, test);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [res.data, playList])
+  }, [deezerPlaylistTracks])
 
 
+  useQuery({
+    queryKey: [Authentication.currentUser?.uid],
+    queryFn: () => {
+      if (isAuthenticated) {
+        return getMyLikedSongs()
+      } else {
+        return []
+      }
+    },
 
-
-
+  })
 
   return (
     <>
@@ -156,10 +114,11 @@ function App() {
                   <Button onClick={() => {
                     setSelectedPlayList(item.id)
                     setPlayList(item.id)
+                    setFirst(!first)
                   }} marginStart={5} width="150px">{item.name}</Button>
                 </ListItem>
               })}
-              <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setDisplayMusic(likedSongs) }}>Liked Songs</Button>
+              <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setMusicToDisplay(likedSongs) }}>Liked Songs</Button>
             </List>
           </GridItem>
         </Show>
@@ -167,7 +126,8 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
 
-          {displayMusic && <MusicList musicToDisplay={displayMusic} />}
+          {musicToDisplay && <MusicList musicToDisplay={musicToDisplay} />}
+
 
         </GridItem>
 
