@@ -41,7 +41,7 @@ export const Search = () => {
     return (
         <InputGroup>
             <Input onKeyDown={e => {
-                if (e.key === "Enter" && ref.current) {
+                if (e.keyCode == 13) {
                     setFirst(first + 1)
 
                 }
