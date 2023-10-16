@@ -1,6 +1,6 @@
 import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, List, ListItem, Spinner } from '@chakra-ui/react';
 import { collection, getDocs } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
 import { MusicPlayerControls } from './Components/MusicPlayerControls';
 import NavBar from "./Components/NavBar";
@@ -15,6 +15,7 @@ import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 import getAmplitudeDataFromDeezer from './Services/getAmplitudeDataFromDeezer';
 import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
 import TopGenreEndPoints from './Services/TopGenreEndPoints';
+import TopCountryEndPoints from './Services/TopCountryEndPoints';
 
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
@@ -25,7 +26,7 @@ function App() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const UserLikedSongsCollection = collection(db, Authentication.currentUser?.uid + "",)
   const { isAuthenticated } = OnUserSignIN()
-
+  const [sideBarContentRef, setSideBarContentRef] = useState("")
   const getMyLikedSongs = async () => {
     const data = await getDocs(UserLikedSongsCollection)
     const filteredData = data.docs.map(dt => ({ ...dt.data() })) as AmplitudeSongProps[]
@@ -126,17 +127,17 @@ function App() {
                 <DrawerHeader>Genres</DrawerHeader>
                 <DrawerBody>
                   <List >
-                    {TopGenreEndPoints.map(item => {
+                    {(sideBarContentRef === "Genres" ? TopGenreEndPoints : TopCountryEndPoints).map(item => {
                       return <ListItem marginY={1.5} key={item.id}>
                         <Button onClick={() => {
                           setSelectedPlayList(item.id)
                           setPlayList(item.id)
                           setFirst(!first)
                           setIsDrawerOpen(!isDrawerOpen)
-                        }} marginStart={5} width="150px">{item.name}</Button>
+                        }} marginStart={5} width="190px">{item.name}</Button>
                       </ListItem>
                     })}
-                    <Button width="150px" marginStart={5} onClick={() => {
+                    <Button width="190px" marginStart={5} onClick={() => {
                       setIsDrawerOpen(!isDrawerOpen)
                       if (likedSongs && likedSongs.length > 0) {
                         setMusicToDisplay(likedSongs)
@@ -155,7 +156,14 @@ function App() {
 
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
-          <Button onClick={() => setIsDrawerOpen(!isDrawerOpen)}>Genres</Button>
+          <Button onClick={() => {
+            setSideBarContentRef("Genres")
+            setIsDrawerOpen(!isDrawerOpen)
+          }}>Genres</Button>
+          <Button onClick={() => {
+            setSideBarContentRef("Countries")
+            setIsDrawerOpen(!isDrawerOpen)
+          }} marginLeft="10px">Countries</Button>
           <div>{deezerPlaylistTracks.isLoading && <Spinner marginLeft="5%" marginTop="5%" />}</div>
           {musicToDisplay && <MusicList musicToDisplay={musicToDisplay} />}
 
