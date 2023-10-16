@@ -1,6 +1,6 @@
 import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, List, ListItem, Spinner } from '@chakra-ui/react';
 import { collection, getDocs } from 'firebase/firestore';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
 import { MusicPlayerControls } from './Components/MusicPlayerControls';
 import NavBar from "./Components/NavBar";
@@ -12,10 +12,10 @@ import { OnUserSignIN } from './Services/OnUserSignIn';
 import amplitude from 'amplitudejs';
 import { useQuery } from '@tanstack/react-query';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
+import TopCountryEndPoints from './Services/TopCountryEndPoints';
+import TopGenreEndPoints from './Services/TopGenreEndPoints';
 import getAmplitudeDataFromDeezer from './Services/getAmplitudeDataFromDeezer';
 import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
-import TopGenreEndPoints from './Services/TopGenreEndPoints';
-import TopCountryEndPoints from './Services/TopCountryEndPoints';
 
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
