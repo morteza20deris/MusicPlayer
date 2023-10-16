@@ -1,4 +1,4 @@
-import { Button, Grid, GridItem, Heading, List, ListItem, Show } from '@chakra-ui/react';
+import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, Heading, List, ListItem, Show } from '@chakra-ui/react';
 import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
@@ -22,7 +22,7 @@ function App() {
   const { setReadyToPlay, playList, setPlayList, musicToDisplay, setMusicToDisplay } = useMusicPlayerData()
   const [first, setFirst] = useState(false)
   const { likedSongs, setLikedSongs } = useLikedSongs()
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const UserLikedSongsCollection = collection(db, Authentication.currentUser?.uid + "",)
   const { isAuthenticated } = OnUserSignIN()
 
@@ -99,33 +99,45 @@ function App() {
   return (
     <>
       <NavBar />
-      <Grid marginTop={70} gridTemplateColumns={{ lg: "150px" }} templateAreas={{
+      <Grid marginTop={70} gridTemplateColumns={{ lg: "0px" }} templateAreas={{
         base: ` " main"`,
         lg: `"side main"`
 
       }}>
 
-        <Show above='lg'>
-          <GridItem area={"side"}>
-            <Heading paddingTop={5} paddingLeft={6}>Genres</Heading>
-            <List >
-              {EndPoints.map(item => {
-                return <ListItem marginY={1.5} key={item.id}>
-                  <Button onClick={() => {
-                    setSelectedPlayList(item.id)
-                    setPlayList(item.id)
-                    setFirst(!first)
-                  }} marginStart={5} width="150px">{item.name}</Button>
-                </ListItem>
-              })}
-              <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setMusicToDisplay(likedSongs) }}>Liked Songs</Button>
-            </List>
-          </GridItem>
-        </Show>
+
+        <GridItem area={"side"}>
+
+          <Drawer placement='left' isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(!isDrawerOpen)}>
+            <DrawerOverlay>
+              <DrawerContent>
+                <DrawerCloseButton />
+                <DrawerHeader>Genres</DrawerHeader>
+                <DrawerBody>
+                  <List >
+                    {EndPoints.map(item => {
+                      return <ListItem marginY={1.5} key={item.id}>
+                        <Button onClick={() => {
+                          setSelectedPlayList(item.id)
+                          setPlayList(item.id)
+                          setFirst(!first)
+                          setIsDrawerOpen(!isDrawerOpen)
+                        }} marginStart={5} width="150px">{item.name}</Button>
+                      </ListItem>
+                    })}
+                    <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setMusicToDisplay(likedSongs) }}>Liked Songs</Button>
+                  </List>
+                </DrawerBody>
+              </DrawerContent>
+            </DrawerOverlay>
+          </Drawer>
+
+        </GridItem>
+
 
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
-
+          <Button onClick={() => setIsDrawerOpen(!isDrawerOpen)} marginTop={5} marginLeft={6}>Genres</Button>
           {musicToDisplay && <MusicList musicToDisplay={musicToDisplay} />}
 
 
