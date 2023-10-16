@@ -155,7 +155,7 @@ function App() {
 
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
-          <Button onClick={() => setIsDrawerOpen(!isDrawerOpen)} marginTop={5} marginLeft={6}>Genres</Button>
+          <Button onClick={() => setIsDrawerOpen(!isDrawerOpen)}>Genres</Button>
           <div>{deezerPlaylistTracks.isLoading && <Spinner marginLeft="5%" marginTop="5%" />}</div>
           {musicToDisplay && <MusicList musicToDisplay={musicToDisplay} />}
 
