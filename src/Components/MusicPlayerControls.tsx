@@ -9,7 +9,7 @@ import { useMusicPlayerData } from '../hooks/useDataStore';
 
 export const MusicPlayerControls = () => {
     const [musicPos, setMusicPos] = useState(0)
-    const { setIsPlaying, readyToPlay, playList } = useMusicPlayerData()
+    const { setIsPlaying, readyToPlay } = useMusicPlayerData()
     const [shuffleState, setShuffleState] = useState(false)
     // const percentageToMusicLength = (percentage: number) => (amplitude.getSongDuration() / 100) * percentage
 
@@ -58,7 +58,7 @@ export const MusicPlayerControls = () => {
 
                 // Track Slider
                 <Box paddingStart="3%" marginTop="4" width="100%" paddingEnd="3%">
-                    <Slider value={getSeekPosFromMusic} onChange={(e) => { amplitude.setSongPlayedPercentage(e) }} aria-label='slider-ex-4' defaultValue={0}>
+                    <Slider focusThumbOnChange={false} value={getSeekPosFromMusic} onChange={(e) => { amplitude.setSongPlayedPercentage(e) }} aria-label='slider-ex-4' defaultValue={0}>
                         <SliderTrack bg='red.100'>
                             <SliderFilledTrack bg='tomato' />
                         </SliderTrack>
@@ -83,7 +83,7 @@ export const MusicPlayerControls = () => {
                         <Button className="amplitude-play-pause" onClick={() => {
 
                             setIsPlaying(amplitude.getPlayerState() === "playing" ? true : false)
-                            console.log(amplitude.getRepeatPlaylist(playList));
+
 
                         }}>{amplitude.getPlayerState() === "playing" ? readyToPlay ? "Pause" : "Loading..." : "Play"}</Button>
 
@@ -92,7 +92,7 @@ export const MusicPlayerControls = () => {
 
                     </HStack>
 
-                    <Button className='amplitude-next' >Next</Button>
+                    <Button className='amplitude-next'  >Next</Button>
 
                 </HStack>
             </VStack>

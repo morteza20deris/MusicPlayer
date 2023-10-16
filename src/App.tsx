@@ -7,7 +7,6 @@ import NavBar from "./Components/NavBar";
 import { AmplitudeSongProps } from './Components/Props';
 import { Authentication, db } from './Configs/Firebase';
 import { OnUserSignIN } from './Services/OnUserSignIn';
-import EndPoints from "./Services/TopGenreEndPoints";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 import amplitude from 'amplitudejs';
@@ -15,9 +14,10 @@ import { useQuery } from '@tanstack/react-query';
 import { GetPlayListTracksFromDeezer } from './Services/MusicServices';
 import getAmplitudeDataFromDeezer from './Services/getAmplitudeDataFromDeezer';
 import { useLikedSongs, useMusicPlayerData } from './hooks/useDataStore';
+import TopGenreEndPoints from './Services/TopGenreEndPoints';
 
 function App() {
-  const [selectedPlayList, setSelectedPlayList] = useState(EndPoints[4].id)
+  const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
   const deezerPlaylistTracks = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" }).data
   const { setReadyToPlay, playList, setPlayList, musicToDisplay, setMusicToDisplay } = useMusicPlayerData()
   const [first, setFirst] = useState(false)
@@ -59,6 +59,7 @@ function App() {
     if (amplitude.getSongs().length === 0 && deezerPlaylistTracks) {
       const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data)
       setMusicToDisplay(test)
+
       amplitude.init({
         songs: test,
         playlists: {
@@ -125,7 +126,7 @@ function App() {
                 <DrawerHeader>Genres</DrawerHeader>
                 <DrawerBody>
                   <List >
-                    {EndPoints.map(item => {
+                    {TopGenreEndPoints.map(item => {
                       return <ListItem marginY={1.5} key={item.id}>
                         <Button onClick={() => {
                           setSelectedPlayList(item.id)
