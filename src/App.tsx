@@ -29,8 +29,17 @@ function App() {
   const getMyLikedSongs = async () => {
     const data = await getDocs(UserLikedSongsCollection)
     const filteredData = data.docs.map(dt => ({ ...dt.data() })) as AmplitudeSongProps[]
-    console.log(filteredData)
+
     setLikedSongs(filteredData)
+    amplitude.addPlaylist("MyLikedSongs", {
+      callbacks: {
+        loadeddata: function () { setReadyToPlay(true) },
+        loadstart: function () { setReadyToPlay(false) },
+        ended: function () {
+          amplitude.pause()
+        }
+      }
+    }, filteredData);
     return filteredData
 
   }
@@ -66,6 +75,7 @@ function App() {
           }
         }
       });
+      amplitude.setRepeat(true)
     } else if (amplitude.getSongs().length > 0 && deezerPlaylistTracks) {
       const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data)
       setMusicToDisplay(test)
@@ -125,7 +135,14 @@ function App() {
                         }} marginStart={5} width="150px">{item.name}</Button>
                       </ListItem>
                     })}
-                    <Button width="150px" marginStart={5} onClick={() => { if (likedSongs && likedSongs.length > 0) setMusicToDisplay(likedSongs) }}>Liked Songs</Button>
+                    <Button width="150px" marginStart={5} onClick={() => {
+                      setIsDrawerOpen(!isDrawerOpen)
+                      if (likedSongs && likedSongs.length > 0) {
+                        setMusicToDisplay(likedSongs)
+
+                        setPlayList("MyLikedSongs")
+                      }
+                    }}>Liked Songs</Button>
                   </List>
                 </DrawerBody>
               </DrawerContent>

@@ -24,12 +24,14 @@ export const MusicPlayerControls = () => {
         switch (loopState) {
             case 1:
                 amplitude.setRepeatSong(true)
+                amplitude.setRepeat(false)
                 setLoopState(2)
 
                 break;
             case 2:
                 setLoopState(1)
                 amplitude.setRepeatSong(false)
+                amplitude.setRepeat(true)
                 break;
             default:
                 break;
