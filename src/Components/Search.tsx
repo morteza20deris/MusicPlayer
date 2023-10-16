@@ -43,7 +43,6 @@ export const Search = () => {
             <Input onKeyDown={e => {
                 if (e.keyCode == 13) {
                     setFirst(first + 1)
-
                 }
             }} ref={ref} borderRadius={20} placeholder="Search..." variant="filled" />
             <InputLeftElement padding={1} children={<BsSearch />} />

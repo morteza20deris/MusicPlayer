@@ -1,4 +1,4 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, List, ListItem } from '@chakra-ui/react';
+import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, List, ListItem, Spinner } from '@chakra-ui/react';
 import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
@@ -18,7 +18,7 @@ import TopGenreEndPoints from './Services/TopGenreEndPoints';
 
 function App() {
   const [selectedPlayList, setSelectedPlayList] = useState(TopGenreEndPoints[4].id)
-  const deezerPlaylistTracks = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" }).data
+  const deezerPlaylistTracks = GetPlayListTracksFromDeezer({ id: selectedPlayList + "" })
   const { setReadyToPlay, playList, setPlayList, musicToDisplay, setMusicToDisplay } = useMusicPlayerData()
   const [first, setFirst] = useState(false)
   const { likedSongs, setLikedSongs } = useLikedSongs()
@@ -47,8 +47,8 @@ function App() {
 
 
   useEffect(() => {
-    if (deezerPlaylistTracks) {
-      setMusicToDisplay(getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data))
+    if (deezerPlaylistTracks.data) {
+      setMusicToDisplay(getAmplitudeDataFromDeezer(deezerPlaylistTracks.data.tracks.data))
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,8 +56,8 @@ function App() {
 
 
   useEffect(() => {
-    if (amplitude.getSongs().length === 0 && deezerPlaylistTracks) {
-      const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data)
+    if (amplitude.getSongs().length === 0 && deezerPlaylistTracks.data) {
+      const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.data.tracks.data)
       setMusicToDisplay(test)
 
       amplitude.init({
@@ -77,8 +77,8 @@ function App() {
         }
       });
       amplitude.setRepeat(true)
-    } else if (amplitude.getSongs().length > 0 && deezerPlaylistTracks) {
-      const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.tracks.data)
+    } else if (amplitude.getSongs().length > 0 && deezerPlaylistTracks.data) {
+      const test = getAmplitudeDataFromDeezer(deezerPlaylistTracks.data.tracks.data)
       setMusicToDisplay(test)
       amplitude.addPlaylist(selectedPlayList, {
         callbacks: {
@@ -92,7 +92,7 @@ function App() {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deezerPlaylistTracks])
+  }, [deezerPlaylistTracks.data])
 
 
   useQuery({
@@ -156,6 +156,7 @@ function App() {
 
         <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
           <Button onClick={() => setIsDrawerOpen(!isDrawerOpen)} marginTop={5} marginLeft={6}>Genres</Button>
+          <div>{deezerPlaylistTracks.isLoading && <Spinner marginLeft="5%" marginTop="5%" />}</div>
           {musicToDisplay && <MusicList musicToDisplay={musicToDisplay} />}
 
 
