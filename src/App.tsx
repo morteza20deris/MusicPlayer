@@ -1,4 +1,4 @@
-import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, List, ListItem, Spinner } from '@chakra-ui/react';
+import { Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Grid, GridItem, HStack, List, ListItem, Spinner, Text } from '@chakra-ui/react';
 import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { MusicList } from "./Components/MusicList";
@@ -111,51 +111,47 @@ function App() {
   return (
     <>
       <NavBar />
-      <Grid marginTop={70} gridTemplateColumns={{ lg: "0px" }} templateAreas={{
-        base: ` " main"`,
-        lg: `"side main"`
-
-      }}>
-
-
-        <GridItem area={"side"}>
-
-          <Drawer placement='left' isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(!isDrawerOpen)}>
-            <DrawerOverlay>
-              <DrawerContent>
-                <DrawerCloseButton />
-                <DrawerHeader>Genres</DrawerHeader>
-                <DrawerBody>
-                  <List >
-                    {(sideBarContentRef === "Genres" ? TopGenreEndPoints : TopCountryEndPoints).map(item => {
-                      return <ListItem marginY={1.5} key={item.id}>
-                        <Button onClick={() => {
-                          setSelectedPlayList(item.id)
-                          setPlayList(item.id)
-                          setFirst(!first)
-                          setIsDrawerOpen(!isDrawerOpen)
-                        }} marginStart={5} width="190px">{item.name}</Button>
-                      </ListItem>
-                    })}
-                    <Button width="190px" marginStart={5} onClick={() => {
-                      setIsDrawerOpen(!isDrawerOpen)
-                      if (likedSongs && likedSongs.length > 0) {
-                        setMusicToDisplay(likedSongs)
-
-                        setPlayList("MyLikedSongs")
-                      }
-                    }}>Liked Songs</Button>
-                  </List>
-                </DrawerBody>
-              </DrawerContent>
-            </DrawerOverlay>
-          </Drawer>
-
-        </GridItem>
+      <Grid marginTop={70}  >
 
 
 
-        <GridItem paddingStart="5%" paddingTop={5} area={"main"}>
+
+        <Drawer placement='left' isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(!isDrawerOpen)}>
+          <DrawerOverlay>
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>Genres</DrawerHeader>
+              <DrawerBody>
+                <List >
+                  {(sideBarContentRef === "Genres" ? TopGenreEndPoints : TopCountryEndPoints).map(item => {
+                    return <ListItem marginY={1.5} key={item.id}>
+                      <Button onClick={() => {
+                        setSelectedPlayList(item.id)
+                        setPlayList(item.id)
+                        setFirst(!first)
+                        setIsDrawerOpen(!isDrawerOpen)
+                      }} marginStart={5} width="190px">{item.name}</Button>
+                    </ListItem>
+                  })}
+                  <Button width="190px" marginStart={5} onClick={() => {
+                    setIsDrawerOpen(!isDrawerOpen)
+                    if (likedSongs && likedSongs.length > 0) {
+                      setMusicToDisplay(likedSongs)
+
+                      setPlayList("MyLikedSongs")
+                    }
+                  }}>Liked Songs</Button>
+                </List>
+              </DrawerBody>
+            </DrawerContent>
+          </DrawerOverlay>
+        </Drawer>
+
+
+
+
+
+        <GridItem paddingStart="5%" paddingTop={5} >
           <Button onClick={() => {
             setSideBarContentRef("Genres")
             setIsDrawerOpen(!isDrawerOpen)
@@ -164,7 +160,8 @@ function App() {
             setSideBarContentRef("Countries")
             setIsDrawerOpen(!isDrawerOpen)
           }} marginLeft="10px">Countries</Button>
-          <div>{deezerPlaylistTracks.isLoading && <Spinner marginLeft="5%" marginTop="5%" />}</div>
+          <HStack justifyContent="center">{deezerPlaylistTracks.isLoading && <Spinner marginTop="5%" />}</HStack>
+          {deezerPlaylistTracks.isError && <HStack justifyContent="center" ><Text fontSize="5vw" color="red">{deezerPlaylistTracks.error.message + ""}</Text></HStack>}
           {musicToDisplay && <MusicList musicToDisplay={musicToDisplay} />}
 
 

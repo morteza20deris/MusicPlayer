@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import ApiClient from "./ApiClient";
 import { PlayListProps, TracksProps } from "../Components/Props";
+import { AxiosError } from "axios";
 
 export const SearchMusicByArtist = ({ artistName }: { artistName: string }) => {
      return useQuery({
@@ -16,11 +17,12 @@ export const SearchMusicByArtist = ({ artistName }: { artistName: string }) => {
 }
 
 export const GetPlayListTracksFromDeezer = ({id}:{id:string}) => {
-   return useQuery({
+   return useQuery<PlayListProps,AxiosError>({
       queryKey: [id],
       queryFn: () => {
          return ApiClient.get<PlayListProps>(`playlist/${id}`)
-         .then(res=>res.data)
+            .then(res => res.data)
+         
       },
       staleTime:Infinity
    })
