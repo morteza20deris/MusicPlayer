@@ -1,6 +1,7 @@
 # React + TypeScript + Vite
 
 Deployed Website:https://music-player-azure-two.vercel.app
+VPN might be needed
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
